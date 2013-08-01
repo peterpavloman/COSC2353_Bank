@@ -1,0 +1,25 @@
+Thu Aug 01 21:02:54 EST 2013 : Apache Derby Network Server - 10.9.1.0 - (1344872) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Thu Aug 01 21:02:54 EST 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance a816c00e-0140-398b-6e26-00004ae527a1 
+on database directory F:\Documents and Settings\Narks\My Documents\COSC2353_Bank\ACME_Database\ACMEDatabase  with class loader sun.misc.Launcher$AppClassLoader@107077e 
+Loaded from file:/F:/Program%20Files/glassfish-4.0/javadb/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_25-b17
+user.dir=F:\Program Files\glassfish-4.0\javadb
+derby.system.home=F:\Documents and Settings\Narks\My Documents\COSC2353_Bank\ACME_Database
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Thu Aug 01 21:03:00 EST 2013:
+Shutting down instance a816c00e-0140-398b-6e26-00004ae527a1 on database directory F:\Documents and Settings\Narks\My Documents\COSC2353_Bank\ACME_Database\ACMEDatabase with class loader sun.misc.Launcher$AppClassLoader@107077e 
+Thu Aug 01 21:03:01 EST 2013 Thread[DRDAConnThread_3,5,main] (DATABASE = ACMEDatabase), (DRDAID = {2}), Database 'ACMEDatabase' shutdown.
+----------------------------------------------------------------
+Thu Aug 01 21:03:23 EST 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance 45b300a8-0140-398b-6e26-00004ae527a1 
+on database directory F:\Documents and Settings\Narks\My Documents\COSC2353_Bank\ACME_Database\ACMEDatabase  with class loader sun.misc.Launcher$AppClassLoader@107077e 
+Loaded from file:/F:/Program%20Files/glassfish-4.0/javadb/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_25-b17
+user.dir=F:\Program Files\glassfish-4.0\javadb
+derby.system.home=F:\Documents and Settings\Narks\My Documents\COSC2353_Bank\ACME_Database
+Database Class Loader started - derby.database.classpath=''
