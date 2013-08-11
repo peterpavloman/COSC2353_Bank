@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package data_access;
+package data.access.rdb;
 
+import data.Customer;
+import data.access.CustomerDAO;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -33,38 +35,43 @@ public class RDBCustomerDAO implements CustomerDAO
                     + "dateofbirth, address) VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             
-            lStatement.setString(1, aCustomer.mFirstName);
-            lStatement.setString(2, aCustomer.mLastName);
-            lStatement.setString(3, aCustomer.mDateOfBirth.toString());
-            lStatement.setString(4, aCustomer.mAddress);
+            lStatement.setString(1, aCustomer.getFirstName());
+            lStatement.setString(2, aCustomer.getLastName());
+            lStatement.setString(3, aCustomer.getDateOfBirth().toString());
+            lStatement.setString(4, aCustomer.getAddress());
             
             lStatement.executeUpdate();
             
             ResultSet lResult = lStatement.getGeneratedKeys();
             lResult.next();
             
-            aCustomer.mIDCustomer = lResult.getInt(1);
+            aCustomer.setIDCustomer(lResult.getInt(1));
         }
         catch (SQLException aException)
         {
             aException.printStackTrace();
             System.out.println("ERROR: Could not add new customer.");
+            // TODO: Throw another exception (we might need to print info to client?)
         }
     }
 
     @Override
-    public String getFirstName() {
+    public Customer get(int aIDCustomer)
+    {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setFirstName(String aFirstName) {
+    public void update(Customer aCustomer)
+    {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void delete() {
+    public void delete(Customer aCustomer)
+    {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
     
 }

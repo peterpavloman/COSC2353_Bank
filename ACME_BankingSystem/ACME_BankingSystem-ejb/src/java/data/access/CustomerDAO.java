@@ -2,7 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package data_access;
+package data.access;
+
+import data.Customer;
 
 /**
  *
@@ -11,9 +13,7 @@ package data_access;
 public interface CustomerDAO 
 {
     public void create(Customer aCustomer);
-    
-    public String getFirstName();
-    public void setFirstName(String aFirstName);
-    
-    public void delete();
+    public Customer get(int aIDCustomer);
+    public void update(Customer aCustomer);
+    public void delete(Customer aCustomer);
 }

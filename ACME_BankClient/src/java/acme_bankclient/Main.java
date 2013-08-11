@@ -23,8 +23,8 @@ public class Main {
     public static void main(String[] args) 
     {
         // TODO code application logic here
-        
-        msCustomerBean.addCustomer("Peter", "Pav", new Date(27, 03, 1992), 
+        // Date constructor deprecated?
+        msCustomerBean.create("Peter", "Pav", new Date(27, 03, 1992), 
                 "1 Someplace Street");
         
         System.out.println("Application client success!");

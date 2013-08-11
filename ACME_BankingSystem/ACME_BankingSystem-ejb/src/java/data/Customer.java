@@ -1,0 +1,106 @@
+package data;
+
+import java.sql.Date;
+
+/**
+ * Customer object used by server-side logic.
+ * 
+ * @author Peter (s3286430)
+ */
+public class Customer 
+{
+    private int mIDCustomer;
+    private String mFirstName;
+    private String mLastName;
+    private Date mDateOfBirth;
+    private String mAddress;
+    
+    private boolean mInitialized;
+    /**
+     * Constructor for Customer class.
+     * 
+     * @param aFirstName
+     * @param aLastName
+     * @param aDateOfBirth
+     * @param aAddress
+     */
+    public Customer(String aFirstName, String aLastName,
+            Date aDateOfBirth, String aAddress)
+    {
+        mFirstName = aFirstName;
+        mLastName = aLastName;
+        mDateOfBirth = aDateOfBirth;
+        mAddress = aAddress;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public String getFirstName() { return mFirstName; }
+    /**
+     * Mutator for FirstName.
+     * Note that changes must be explicitly saved via a data access object.
+     * @param aFirstName
+     * @see getFirstName()
+     */
+    public void setFirstName(String aFirstName)
+    {
+        mFirstName = aFirstName;
+    }
+    /**
+     *
+     * @return
+     */
+    public String getLastName() { return mLastName; }
+    /**
+     * Mutator for LastName.
+     * Note that changes must be explicitly saved via a data access object.
+     * @param aLastName
+     * @see getLastName()
+     */
+    public void setLastName(String aLastName) 
+    {
+        mLastName = aLastName;
+    }
+    /**
+     *
+     * @return
+     */
+    public Date getDateOfBirth() { return mDateOfBirth; }
+    /**
+     *
+     * @param aDateOfBirth
+     */
+    public void setDateOfBirth(Date aDateOfBirth)
+    {
+        mDateOfBirth = aDateOfBirth;
+    }
+    /**
+     *
+     * @return
+     */
+    public String getAddress() { return mAddress; }
+    /**
+     *
+     * @param aAddress
+     */
+    public void setAddress(String aAddress) 
+    {
+        mAddress = aAddress;
+    } 
+    /**
+     *
+     * @return
+     */
+    public int getIDCustomer() { return mIDCustomer; }
+    /**
+     *
+     * @param aIDCustomer
+     */
+    public void setIDCustomer(int aIDCustomer)
+    {
+        mIDCustomer = aIDCustomer;
+    }
+    
+}

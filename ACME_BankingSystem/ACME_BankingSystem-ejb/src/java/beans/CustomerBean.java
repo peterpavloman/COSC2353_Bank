@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package beans;
 
-import data_access.Customer;
-import data_access.CustomerDAO;
-import data_access.RDBCustomerDAO;
+import data.Customer;
+import data.access.CustomerDAO;
+import data.access.rdb.RDBCustomerDAO;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -17,16 +13,19 @@ import javax.ejb.Stateless;
 import javax.sql.DataSource;
 
 /**
- *
- * @author narks
+ * Server-side implementation of a Stateless Session Bean that holds 
+ * Customer business logic.
+ * 
+ * @author Peter (s3286430)
  */
 @Stateless
-public class CustomerBean implements CustomerBeanRemote 
+public class CustomerBean implements CustomerBeanRemote
 {
-    @Resource(lookup="jdbc/ACMEDBDatasource")
+
+    @Resource(lookup = "jdbc/ACMEDBDatasource")
     private DataSource mDataSource;
     private Connection mDBConnection;
-    
+
     @PostConstruct
     public void initialize()
     {
@@ -39,7 +38,7 @@ public class CustomerBean implements CustomerBeanRemote
             aException.printStackTrace();
         }
     }
-    
+
     @PreDestroy
     public void close()
     {
@@ -53,8 +52,8 @@ public class CustomerBean implements CustomerBeanRemote
         }
     }
 
-    public void addCustomer(String aFirstName, String aLastName, 
-            Date aDateOfBirth, String aAddress) 
+    public void create(String aFirstName, String aLastName,
+            Date aDateOfBirth, String aAddress)
     {
         try
         {
@@ -67,8 +66,21 @@ public class CustomerBean implements CustomerBeanRemote
         {
             aException.printStackTrace();
             System.out.println("Could not create customer.");
+            // May need to throw exception here
+            // How do we get the client to catch the exception?
         }
     }
-    
-    
+
+    @Override
+    public void update(int aIDCustomer, String aFirstName, String aLastName,
+            Date aDateOfBirth, String aAddress)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void delete(int aIDCustomer)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

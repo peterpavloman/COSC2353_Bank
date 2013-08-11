@@ -1,19 +1,23 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package beans;
 
 import java.sql.Date;
 import javax.ejb.Remote;
 
 /**
- *
- * @author narks
+ * Remote Interface of a Stateless Session Bean that holds 
+ * Customer related business logic.
+ * 
+ * @author Peter (s3286430)
  */
+
 @Remote
 public interface CustomerBeanRemote 
 {
-    public void addCustomer(String aFirstName, String aLastName,
+    public void create(String aFirstName, String aLastName,
             Date aDateOfBirth, String aAddress);
+    
+    public void update(int aIDCustomer, String aFirstName, String aLastName,
+            Date aDateOfBirth, String aAddress);
+    
+    public void delete(int aIDCustomer);
 }
