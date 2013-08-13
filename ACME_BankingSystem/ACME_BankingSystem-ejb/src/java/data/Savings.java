@@ -4,11 +4,13 @@
  */
 package data;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author narks
  */
 public class Savings
 {
-    
+    private BigDecimal mBalance;
 }
