@@ -15,7 +15,6 @@ public class Customer
     private Date mDateOfBirth;
     private String mAddress;
     
-    private boolean mInitialized;
     /**
      * Constructor for Customer class.
      * 
