@@ -12,6 +12,7 @@ import javax.ejb.Remote;
  *
  * @author narks
  */
+
 @Remote
 public interface StatefulTestBeanRemote
 {

@@ -11,7 +11,7 @@ import javax.ejb.ApplicationException;
  * @author narks
  */
 @ApplicationException(rollback=true)
-public class ServerTestException extends Exception implements java.io.Serializable
+public class ServerTestException extends Exception
 {
 	
 }
