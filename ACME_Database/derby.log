@@ -1,1 +1,11 @@
-Thu Aug 15 20:04:48 EST 2013 : Apache Derby Network Server - 10.9.1.0 - (1344872) started and ready to accept connections on port 1527
+Tue Aug 20 09:23:13 EST 2013 : Apache Derby Network Server - 10.9.1.0 - (1344872) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Tue Aug 20 09:23:13 EST 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance a816c00e-0140-98e3-ade1-ffffe6142db1 
+on database directory /home/narks/Documents/COSC2353_Bank/ACME_Database/ACMEDatabase  with class loader sun.misc.Launcher$AppClassLoader@68f507d2 
+Loaded from file:/usr/local/glassfish-4.0/javadb/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_25-b15
+user.dir=/usr/local/glassfish-4.0/javadb
+derby.system.home=/home/narks/Documents/COSC2353_Bank/ACME_Database
+Database Class Loader started - derby.database.classpath=''

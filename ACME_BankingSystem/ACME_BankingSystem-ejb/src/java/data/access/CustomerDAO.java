@@ -1,19 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package data.access;
 
 import data.Customer;
+import exceptions.ApplicationLogicException;
 
 /**
- *
- * @author narks
+ * Data Access Object interface for Customers.
+ * 
+ * @author s3286430
  */
 public interface CustomerDAO 
 {
-    public void create(Customer aCustomer);
-    public Customer get(int aIDCustomer);
-    public void update(Customer aCustomer);
-    public void delete(Customer aCustomer);
+    public void create(Customer aCustomer) throws ApplicationLogicException;
+    public Customer get(int aIDCustomer) throws ApplicationLogicException;
+    public void update(Customer aCustomer) throws ApplicationLogicException;
+    public void delete(Customer aCustomer) throws ApplicationLogicException;
 }

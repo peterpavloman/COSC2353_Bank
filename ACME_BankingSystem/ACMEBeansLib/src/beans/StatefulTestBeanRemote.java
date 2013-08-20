@@ -4,7 +4,7 @@
  */
 package beans;
 
-import exceptions.ServerTestException;
+import exceptions.ApplicationLogicException;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -16,7 +16,7 @@ import javax.ejb.Remote;
 @Remote
 public interface StatefulTestBeanRemote
 {
-    public void addItemToCart(int aId) throws ServerTestException;
+    public void addItemToCart(int aId) throws ApplicationLogicException;
     public List<String> getItemsInCart();
     public void emptyCart();
 }

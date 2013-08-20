@@ -4,7 +4,6 @@
  */
 package beans;
 
-import exceptions.ServerTestException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -32,13 +31,13 @@ public class StatefulTestBean implements StatefulTestBeanRemote
     }
 
     @Override
-    public void addItemToCart(int aId) throws ServerTestException
+    public void addItemToCart(int aId) throws ApplicationLogicException
     {
 		if (aId == 4)
 		{
 			// Lets say item 4 is out of stock - we want to raise an error
 			// and make sure its reported to the client.
-			throw new ServerTestException();
+			throw new ApplicationLogicException();
 		}
         mCartItems.add(mInventoryItems.get(aId - 1));
     }
