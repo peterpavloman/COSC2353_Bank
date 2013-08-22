@@ -1,7 +1,9 @@
 package beans;
 
+import exceptions.LoginFailureException;
 import java.sql.Date;
 import javax.ejb.Remote;
+import security.LoginSession;
 
 /**
  * Remote Interface of a Stateless Session Bean that holds 
@@ -13,11 +15,13 @@ import javax.ejb.Remote;
 @Remote
 public interface CustomerBeanRemote 
 {
+	public void login(LoginSession aSession) throws LoginFailureException;
+	
     public void create(String aFirstName, String aLastName,
-            Date aDateOfBirth, String aAddress);
+            Date aDateOfBirth, String aAddress) throws LoginFailureException;
     
     public void update(int aIDCustomer, String aFirstName, String aLastName,
-            Date aDateOfBirth, String aAddress);
+            Date aDateOfBirth, String aAddress) throws LoginFailureException;
     
-    public void delete(int aIDCustomer);
+    public void delete(int aIDCustomer) throws LoginFailureException;
 }

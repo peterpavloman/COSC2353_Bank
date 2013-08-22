@@ -5,17 +5,20 @@
 package acme_bankclient;
 
 import beans.CustomerBeanRemote;
+import beans.EmployeeBeanRemote;
 import beans.StatefulTestBeanRemote;
 import exceptions.ApplicationLogicException;
+import exceptions.LoginFailureException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import javax.ejb.EJB;
+import security.LoginSession;
 
 /**
  *
- * @author Narks
+ * @author Peter (s3286430)
  */
 public class Main {
 
@@ -23,6 +26,8 @@ public class Main {
     private static CustomerBeanRemote msCustomerBean;
 	@EJB
 	private static StatefulTestBeanRemote msStatefulTestBean;
+	@EJB
+	private static EmployeeBeanRemote msEmployeeBean;
     
     private static int testGetSelection()
     {
@@ -126,6 +131,16 @@ public class Main {
         
         System.out.println("Application client success!");
         */
+		try
+		{
+			// LoginSession lSession = msEmployeeBean.login(0, "legit");
+			msEmployeeBean.login(0, "legit");
+		}
+		catch (LoginFailureException aException)
+		{
+			System.out.println("Login failed: " + aException.getUserMessage());
+		}
+		
 		testPrintMenu();
     }
 }

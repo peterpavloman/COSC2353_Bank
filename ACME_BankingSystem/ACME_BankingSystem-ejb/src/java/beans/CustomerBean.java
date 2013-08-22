@@ -3,6 +3,7 @@ package beans;
 import data.Customer;
 import data.access.CustomerDAO;
 import data.access.rdb.RDBCustomerDAO;
+import exceptions.LoginFailureException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -11,6 +12,8 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
+import security.LoginSession;
+import security.LoginSessionImpl;
 
 /**
  * Server-side implementation of a Stateless Session Bean that holds 
@@ -25,7 +28,9 @@ public class CustomerBean implements CustomerBeanRemote
     @Resource(lookup = "jdbc/ACMEDBDatasource")
     private DataSource mDataSource;
     private Connection mDBConnection;
-
+	
+	private LoginSession mLoginSession;
+	
     @PostConstruct
     public void initialize()
     {
@@ -83,4 +88,10 @@ public class CustomerBean implements CustomerBeanRemote
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+	@Override
+	public void login(LoginSession aSession) throws LoginFailureException
+	{
+		mLoginSession = aSession;
+	}
 }
