@@ -4,6 +4,7 @@
  */
 package beans;
 
+import exceptions.ApplicationLogicException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;

@@ -10,6 +10,8 @@ public class Employee
     private int mIDEmployee;
     private String mFirstName;
     private String mLastName;
+	// Probably not the best idea to have passwords stored as plaintext...
+	private String mPassword;
     
     /**
      * Constructor for Employee class.
@@ -17,11 +19,14 @@ public class Employee
      * 
      * @param aFirstName
      * @param aLastName
+	 * @param aPassword Password (in plaintext - must change later to something
+	 * a little more secure when we cover security in class)
      */
-    public Employee(String aFirstName, String aLastName)
+    public Employee(String aFirstName, String aLastName, String aPassword)
     {
         mFirstName = aFirstName;
         mLastName = aLastName;
+		mPassword = aPassword;
     }
     
     /**
@@ -63,6 +68,10 @@ public class Employee
     {
         mIDEmployee = aIDEmployee;
     }
-    
+    public String getPassword() { return mPassword; }
+	public void setPassword(String aPassword)
+	{
+		mPassword = aPassword;
+	}
 }
 

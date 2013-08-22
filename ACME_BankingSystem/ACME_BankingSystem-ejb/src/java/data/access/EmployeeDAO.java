@@ -1,6 +1,7 @@
 package data.access;
 
 import data.Employee;
+import exceptions.ApplicationLogicException;
 
 /**
  *
@@ -8,8 +9,8 @@ import data.Employee;
  */
 public interface EmployeeDAO 
 {
-    public void create(Employee aEmployee);
-    public Employee get(int aIDEmployee);
-    public void update(Employee aEmployee);
-    public void delete(Employee aEmployee);
+    public void create(Employee aEmployee) throws ApplicationLogicException;
+    public Employee get(int aIDEmployee) throws ApplicationLogicException;
+    public void update(Employee aEmployee) throws ApplicationLogicException;
+    public void delete(Employee aEmployee) throws ApplicationLogicException;
 }

@@ -6,7 +6,7 @@ package acme_bankclient;
 
 import beans.CustomerBeanRemote;
 import beans.StatefulTestBeanRemote;
-import exceptions.ServerTestException;
+import exceptions.ApplicationLogicException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -84,9 +84,10 @@ public class Main {
 					msStatefulTestBean.addItemToCart(lSelection);
 					System.out.println("Adding item " + lSelection);
 				}
-				catch (ServerTestException lException)
+				catch (ApplicationLogicException lException)
 				{
-					System.out.println("Could not add item, ServerTestException thrown!");
+					System.out.println("An error has occurred: " +
+							lException.getUserMessage());
 				}
 			}
 			else if (lSelection == 5)

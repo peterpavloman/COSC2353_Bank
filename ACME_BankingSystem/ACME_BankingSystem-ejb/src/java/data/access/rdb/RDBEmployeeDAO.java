@@ -1,7 +1,8 @@
 package data.access.rdb;
 
 import data.Customer;
-import data.access.CustomerDAO;
+import data.Employee;
+import data.access.EmployeeDAO;
 import exceptions.ApplicationLogicException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -11,71 +12,70 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Relational database implementation of Customer DAO.
+ * Relational database implementation of Employee DAO.
  * 
  * @author s3286430
  */
 
-public class RDBCustomerDAO implements CustomerDAO
+public class RDBEmployeeDAO implements EmployeeDAO
 {
     private Connection mDBConnection;
     
-    public RDBCustomerDAO(Connection aDBConnection)
+    public RDBEmployeeDAO(Connection aDBConnection)
     {
         mDBConnection = aDBConnection;
     }
     
 	@Override
-    public void create(Customer aCustomer) throws ApplicationLogicException
+    public void create(Employee aEmployee) throws ApplicationLogicException
     {
         try
         {
             PreparedStatement lStatement = mDBConnection.prepareStatement(
-                    "INSERT INTO ACMEBANK.CUSTOMER(firstname, lastname,"
-                    + "dateofbirth, address) VALUES (?,?,?,?)",
+                    "INSERT INTO ACMEBANK.EMPLOYEE(firstname, lastname,"
+                    + "password) VALUES (?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             
-            lStatement.setString(1, aCustomer.getFirstName());
-            lStatement.setString(2, aCustomer.getLastName());
-            lStatement.setString(3, aCustomer.getDateOfBirth().toString());
-            lStatement.setString(4, aCustomer.getAddress());
+            lStatement.setString(1, aEmployee.getFirstName());
+            lStatement.setString(2, aEmployee.getLastName());
+            lStatement.setString(3, aEmployee.getPassword());
             
             lStatement.executeUpdate();
             
             ResultSet lResult = lStatement.getGeneratedKeys();
             lResult.next();
             
-            aCustomer.setIDCustomer(lResult.getInt(1));
+            aEmployee.setIDEmployee(lResult.getInt(1));
         }
         catch (SQLException aException)
         {
             aException.printStackTrace();
-            System.out.println("ERROR: Could not add new customer.");
-            throw new ApplicationLogicException("Could not add new customer.");
+            System.out.println("ERROR: Could not add new employee.");
+            throw new ApplicationLogicException("Could not add new employee.");
         }
     }
 
     @Override
-    public Customer get(int aIDCustomer) throws ApplicationLogicException
+    public Employee get(int aIDEmployee) throws ApplicationLogicException
     {
         try
         {
             PreparedStatement lStatement = mDBConnection.prepareStatement(
-                    "SELECT firstname, lastname, dateofbirth, address FROM "
-					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?;");
+                    "SELECT firstname, lastname, password FROM "
+					+ "ACMEBANK.EMPLOYEE WHERE id_employee = ?;");
             
-            lStatement.setInt(1, aIDCustomer);
+            lStatement.setInt(1, aIDEmployee);
 			
             ResultSet lResult = lStatement.executeQuery();
             // Check if there was a row returned in the ResultSet
 			if (1 == 1)
 			{
-				Customer lCustomer = new Customer("a", "b", new Date(12,12,12), "d");
-				return lCustomer;
+				Employee lEmployee = new Employee("a", "b", "d");
+				return lEmployee;
 			}
 			else
 			{
-				throw new ApplicationLogicException("Customer does not exist!");
+				throw new ApplicationLogicException("Employee does not exist!");
 			}
 			
 			// If not, throw an exception.
@@ -83,13 +83,13 @@ public class RDBCustomerDAO implements CustomerDAO
         catch (SQLException aException)
         {
             aException.printStackTrace();
-            System.out.println("ERROR: Could not fetch customer ID.");
-            throw new ApplicationLogicException("Could not fetch customer ID.");
+            System.out.println("ERROR: Could not fetch employee ID.");
+            throw new ApplicationLogicException("Could not fetch employee ID.");
         }
     }
 
     @Override
-    public void update(Customer aCustomer) throws ApplicationLogicException
+    public void update(Employee aEmployee) throws ApplicationLogicException
     {
         try
         {
@@ -122,7 +122,7 @@ public class RDBCustomerDAO implements CustomerDAO
     }
 
     @Override
-    public void delete(Customer aCustomer) throws ApplicationLogicException
+    public void delete(Employee aEmployee) throws ApplicationLogicException
     {
         try
         {
