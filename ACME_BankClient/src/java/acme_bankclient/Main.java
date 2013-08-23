@@ -133,8 +133,10 @@ public class Main {
         */
 		try
 		{
-			// LoginSession lSession = msEmployeeBean.login(0, "legit");
-			msEmployeeBean.login(0, "legit");
+			System.out.println("Attempting login into Employee bean");
+			LoginSession lSession = msEmployeeBean.login(0, "legit");
+			System.out.println("Attempting login into Customer bean");
+			msCustomerBean.login(lSession);
 		}
 		catch (LoginFailureException aException)
 		{
