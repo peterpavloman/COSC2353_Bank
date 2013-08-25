@@ -114,30 +114,50 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 	public int createCustomer(String aFirstName, String aLastName,
 			Date aDateOfBirth, String aAddress) throws LoginFailureException, ApplicationLogicException
 	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	public int createSavingsAccount(int aIDCustomer) throws LoginFailureException, ApplicationLogicException
 	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	public void depositIntoSavingsAccount(int aIDSavings) throws LoginFailureException, ApplicationLogicException
 	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	public void withdrawIntoSavingsAccount(int aIDSavings) throws LoginFailureException, ApplicationLogicException
 	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	public int getSavingsAccountBalance(int aIDSavings) throws LoginFailureException, ApplicationLogicException
 	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
