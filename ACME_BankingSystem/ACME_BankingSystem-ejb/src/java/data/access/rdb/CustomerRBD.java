@@ -12,19 +12,19 @@ import java.sql.Statement;
 
 /**
  * Relational database implementation of Customer DAO.
- * 
+ *
  * @author s3286430
  */
 
-public class RDBCustomerDAO implements CustomerDAO
+public class CustomerRBD implements CustomerDAO
 {
     private Connection mDBConnection;
-    
-    public RDBCustomerDAO(Connection aDBConnection)
+
+    public CustomerRBD(Connection aDBConnection)
     {
         mDBConnection = aDBConnection;
     }
-    
+
 	@Override
     public void create(Customer aCustomer) throws ApplicationLogicException
     {
@@ -34,17 +34,17 @@ public class RDBCustomerDAO implements CustomerDAO
                     "INSERT INTO ACMEBANK.CUSTOMER(firstname, lastname,"
                     + "dateofbirth, address) VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
-            
+
             lStatement.setString(1, aCustomer.getFirstName());
             lStatement.setString(2, aCustomer.getLastName());
             lStatement.setString(3, aCustomer.getDateOfBirth().toString());
             lStatement.setString(4, aCustomer.getAddress());
-            
+
             lStatement.executeUpdate();
-            
+
             ResultSet lResult = lStatement.getGeneratedKeys();
             lResult.next();
-            
+
             aCustomer.setIDCustomer(lResult.getInt(1));
         }
         catch (SQLException aException)
@@ -60,31 +60,22 @@ public class RDBCustomerDAO implements CustomerDAO
     {
         try
         {
-            PreparedStatement lStatement = mDBConnection.prepareStatement(
+            PreparedStatement statement = mDBConnection.prepareStatement(
                     "SELECT firstname, lastname, dateofbirth, address FROM "
 					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?;");
-            
-            lStatement.setInt(1, aIDCustomer);
-			
-            ResultSet lResult = lStatement.executeQuery();
-            // Check if there was a row returned in the ResultSet
-			if (1 == 1)
-			{
-				Customer lCustomer = new Customer("a", "b", new Date(12,12,12), "d");
-				return lCustomer;
-			}
+
+            statement.setInt(1, aIDCustomer);
+            ResultSet result = statement.executeQuery();
+
+			if(result.next())
+				return new Customer(result.getString(1), result.getString(2), result.getDate(3), result.getString(4));
 			else
-			{
-				throw new ApplicationLogicException("Customer does not exist!");
-			}
-			
-			// If not, throw an exception.
+				throw new ApplicationLogicException("ERROR: Invalid customer ID.");
         }
         catch (SQLException aException)
         {
             aException.printStackTrace();
-            System.out.println("ERROR: Could not fetch customer ID.");
-            throw new ApplicationLogicException("Could not fetch customer ID.");
+            throw new ApplicationLogicException("SYSTEM ERROR: SQL Exception thrown.");
         }
     }
 
@@ -99,14 +90,14 @@ public class RDBCustomerDAO implements CustomerDAO
             PreparedStatement lStatement = mDBConnection.prepareStatement(
                     "UPDATE ACMEBANK.CUSTOMER SET firstname=?, lastname=?, "
 					+ "dateofbirth=?, address=? WHERE id_customer=?;");
-            
+
             lStatement.setString(1, aCustomer.getFirstName());
             lStatement.setString(2, aCustomer.getLastName());
             lStatement.setString(3, aCustomer.getDateOfBirth().toString());
             lStatement.setString(4, aCustomer.getAddress());
-			
+
 			lStatement.setInt(5, aCustomer.getIDCustomer());
-            
+
             int lRowsAffected = lStatement.executeUpdate();
 			if (lRowsAffected != 1)
 			{
@@ -127,10 +118,9 @@ public class RDBCustomerDAO implements CustomerDAO
         try
         {
             PreparedStatement lStatement = mDBConnection.prepareStatement(
-                    "DELETE FROM ACMEBANK.CUSTOMER WHERE "
-					+ "id_customer=?");
+                    "DELETE FROM ACMEBANK.CUSTOMER WHERE id_customer=?");
             lStatement.setInt(1, aCustomer.getIDCustomer());
-            
+
             int lRowsAffected = lStatement.executeUpdate();
 			if (lRowsAffected != 1)
 			{
@@ -144,6 +134,4 @@ public class RDBCustomerDAO implements CustomerDAO
             throw new ApplicationLogicException("Could not delete customer.");
         }
     }
-    
-    
 }

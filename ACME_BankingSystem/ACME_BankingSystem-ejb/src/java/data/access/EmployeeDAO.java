@@ -7,10 +7,11 @@ import exceptions.ApplicationLogicException;
  *
  * @author narks
  */
-public interface EmployeeDAO 
+public interface EmployeeDAO
 {
     public void create(Employee aEmployee) throws ApplicationLogicException;
     public Employee get(int aIDEmployee) throws ApplicationLogicException;
+	public Employee get(int id, String password) throws ApplicationLogicException;
     public void update(Employee aEmployee) throws ApplicationLogicException;
     public void delete(Employee aEmployee) throws ApplicationLogicException;
 }

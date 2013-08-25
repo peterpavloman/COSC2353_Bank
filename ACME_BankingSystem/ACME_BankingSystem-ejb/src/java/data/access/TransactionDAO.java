@@ -1,15 +1,17 @@
 package data.access;
 
 import data.Transaction;
+import exceptions.ApplicationLogicException;
 
 /**
  *
  * @author narks
  */
-public interface TransactionDAO 
+public interface TransactionDAO
 {
-    public void create(Transaction aTransaction);
-    public Transaction get(int aIDTransaction);
-    public void update(Transaction aTransaction);
-    public void delete(Transaction aTransaction);
+    public void create(Transaction aTransaction) throws ApplicationLogicException;
+    public Transaction get(int aIDTransaction) throws ApplicationLogicException;
+    public void update(Transaction aTransaction) throws ApplicationLogicException;
+    public void delete(Transaction aTransaction) throws ApplicationLogicException;
+	public void delete(int id) throws ApplicationLogicException;
 }
