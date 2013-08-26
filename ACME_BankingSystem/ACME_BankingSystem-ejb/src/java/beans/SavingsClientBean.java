@@ -3,6 +3,7 @@ package beans;
 import data.Customer;
 import data.Employee;
 import data.Savings;
+import data.Transaction;
 import data.access.CustomerDAO;
 import data.access.EmployeeDAO;
 import data.access.SavingsDAO;
@@ -169,12 +170,16 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		}
 		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
 		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
+		
 		Savings lSavings = lSavingsDAO.get(aIDSavings);
 		lSavings.setBalance(lSavings.getBalance().add(aAmount));
 		
-		lSavingsDAO.update(lSavings);
+		Transaction lTransaction = new Transaction(aIDSavings, aAmount, 
+				"Deposit into savings account");
 		
-		// We must also record a transaction
+		// Record transaction, then do update
+		lTransactionDAO.create(lTransaction);
+		lSavingsDAO.update(lSavings);
 	}
 
 	@Override
@@ -184,7 +189,23 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
+		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
+		
+		Savings lSavings = lSavingsDAO.get(aIDSavings);
+		lSavings.setBalance(lSavings.getBalance().subtract(aAmount));
+		
+		if (lSavings.getBalance().compareTo(BigDecimal.ZERO) < 0)
+		{
+			throw new ApplicationLogicException("Account does not have sufficient funds!");
+		}
+		
+		Transaction lTransaction = new Transaction(aIDSavings, aAmount, 
+				"Withdraw from savings account");
+		
+		// Record transaction, then do update
+		lTransactionDAO.create(lTransaction);
+		lSavingsDAO.update(lSavings);
 	}
 
 	@Override
@@ -194,7 +215,9 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
+		Savings lSavings = lSavingsDAO.get(aIDSavings);
+		return lSavings.getBalance();
 	}
 
 	

@@ -102,6 +102,7 @@ public class SavingsRDB implements SavingsDAO{
 	@Override
 	public int getSavingsAccountCount(int aCustomerId) throws ApplicationLogicException
 	{
+		// TODO - something like SELECT COUNT(*) (SELECT ACCOUNTS WHERE CUSTOMER_ID = SAVINGS_ID)
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
