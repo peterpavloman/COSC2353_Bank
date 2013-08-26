@@ -47,7 +47,7 @@ public class TransactionRDB implements TransactionDAO{
 			ResultSet result= statement.executeQuery();
 
 			if(result.next())
-				return new Transaction(result.getInt(1), result.getInt(2), result.getInt(3), result.getString(4));
+				return new Transaction(result.getInt(1), result.getInt(2), result.getBigDecimal(3), result.getString(4));
 			else
 				throw new ApplicationLogicException("ERROR: Invalid transation ID.");
 
@@ -64,7 +64,7 @@ public class TransactionRDB implements TransactionDAO{
 				"UPDATE ACMEBANK.BANKTRANSCATION SET ID_SAVINGS= ?, AMOUNT= ?, DESCRIPTION= ? WHERE ID_BANKTRANSACTION= ?");
 
 			statement.setInt(1, aTransaction.getID());
-			statement.setInt(2, aTransaction.getAmount());
+			statement.setBigDecimal(2, aTransaction.getAmount());
 			statement.setString(3, aTransaction.getDescription());
 
 			if(statement.executeUpdate()!= 1)

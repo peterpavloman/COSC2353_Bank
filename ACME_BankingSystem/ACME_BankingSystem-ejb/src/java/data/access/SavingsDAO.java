@@ -5,7 +5,7 @@ import exceptions.ApplicationLogicException;
 
 /**
  *
- * @author narks
+ * @author s3286430
  */
 public interface SavingsDAO
 {
@@ -14,4 +14,7 @@ public interface SavingsDAO
     public void update(Savings aSavings) throws ApplicationLogicException;
     public void delete(Savings aSavings) throws ApplicationLogicException;
 	public void delete(int id) throws ApplicationLogicException;
+	
+	public int getSavingsAccountCount(int aCustomerId) 
+			throws ApplicationLogicException;
 }

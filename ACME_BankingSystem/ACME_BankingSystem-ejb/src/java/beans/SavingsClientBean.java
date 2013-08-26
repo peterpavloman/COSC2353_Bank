@@ -2,11 +2,18 @@ package beans;
 
 import data.Customer;
 import data.Employee;
+import data.Savings;
 import data.access.CustomerDAO;
 import data.access.EmployeeDAO;
-import data.access.rdb.RDBCustomerDAO;
+import data.access.SavingsDAO;
+import data.access.TransactionDAO;
+import data.access.rdb.CustomerRBD;
+import data.access.rdb.EmployeeRDB;
+import data.access.rdb.SavingsRDB;
+import data.access.rdb.TransactionRDB;
 import exceptions.ApplicationLogicException;
 import exceptions.LoginFailureException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -15,7 +22,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.Stateful;
 import javax.sql.DataSource;
-import security.LoginSession;
 
 /**
  *
@@ -26,6 +32,8 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 {
 	private static final long	LOGIN_SESSION_PERIOD_MS = 60000;
 	private static final int	MAX_OPERATIONS_PER_SESSION = 10;
+	
+	private static final int	MAX_SAVINGS_ACCOUNTS_PER_CUSTOMER = 2;
 	
 	@Resource(lookup = "jdbc/ACMEDBDatasource")
     private DataSource mDataSource;
@@ -38,6 +46,9 @@ public class SavingsClientBean implements SavingsClientBeanRemote
     @PostConstruct
     public void initialize()
     {
+		mLoggedIn = false;
+		mOperationCount = 0;
+		mLoginTime = new java.util.Date().getTime();
         try
         {
             mDBConnection = mDataSource.getConnection();
@@ -81,15 +92,14 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		mLoginTime = new java.util.Date().getTime();
 		try
         {
-			/*
-            EmployeeDAO mDAO = new RDBEmployeeDAO(mDBConnection);
-            Employee lEmployee = RDBEmployeeDAO.get(aIDEmployee);
+            EmployeeDAO lDAO = new EmployeeRDB(mDBConnection);
+            Employee lEmployee = lDAO.get(aIDEmployee);
 			
 			if (lEmployee.getPassword().equals(aPassword))
 			{
 				mLoggedIn = true;
+				return true;
 			}
-			*/
         }
         catch (Exception aException)
         {
@@ -101,13 +111,13 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 	@Override
 	public int getOperationCount()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return mOperationCount;
 	}
 
 	@Override
 	public boolean getIsLoggedIn()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return mLoggedIn;
 	}
 
 	@Override
@@ -118,7 +128,12 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		CustomerDAO lDAO = new CustomerRBD(mDBConnection);
+		Customer lNewCustomer = new Customer(aFirstName, aLastName, aDateOfBirth, aAddress);
+		lDAO.create(lNewCustomer);
+		
+		int lCustomerId = lNewCustomer.getIDCustomer();
+		return lCustomerId;
 	}
 
 	@Override
@@ -128,11 +143,42 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		
+		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
+		
+		// Enforce maximum of 2 savings account per customer
+		int lAccountCount = lSavingsDAO.getSavingsAccountCount(aIDCustomer);
+		if (lAccountCount >= MAX_SAVINGS_ACCOUNTS_PER_CUSTOMER)
+		{
+			throw new ApplicationLogicException("Customer has reached limit of 2 saving accounts!");
+		}
+		
+		Savings lNewAccount = new Savings(aIDCustomer, new BigDecimal("0.0"));
+		lSavingsDAO.create(lNewAccount);
+		
+		int lID = lNewAccount.getIDSavings();
+		return lID;
 	}
 
 	@Override
-	public void depositIntoSavingsAccount(int aIDSavings) throws LoginFailureException, ApplicationLogicException
+	public void depositIntoSavingsAccount(int aIDSavings, BigDecimal aAmount) throws LoginFailureException, ApplicationLogicException
+	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
+		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
+		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
+		Savings lSavings = lSavingsDAO.get(aIDSavings);
+		lSavings.setBalance(lSavings.getBalance().add(aAmount));
+		
+		lSavingsDAO.update(lSavings);
+		
+		// We must also record a transaction
+	}
+
+	@Override
+	public void withdrawIntoSavingsAccount(int aIDSavings, BigDecimal aAmount) throws LoginFailureException, ApplicationLogicException
 	{
 		if (checkLoginExpired())
 		{
@@ -142,17 +188,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 	}
 
 	@Override
-	public void withdrawIntoSavingsAccount(int aIDSavings) throws LoginFailureException, ApplicationLogicException
-	{
-		if (checkLoginExpired())
-		{
-			throw new LoginFailureException();
-		}
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public int getSavingsAccountBalance(int aIDSavings) throws LoginFailureException, ApplicationLogicException
+	public BigDecimal getSavingsAccountBalance(int aIDSavings) throws LoginFailureException, ApplicationLogicException
 	{
 		if (checkLoginExpired())
 		{

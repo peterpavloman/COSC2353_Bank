@@ -4,22 +4,25 @@
  */
 package data;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author narks
  */
 public class Transaction{
-	private int		id, savingID, amount;
+	private int		id, savingID;
+	private BigDecimal mAmount;
 	private String	description;
 
-	public Transaction(int savingID, int amount, String description){
-		this(-1, savingID, amount, description);
+	public Transaction(int savingID, BigDecimal aAmount, String description){
+		this(-1, savingID, aAmount, description);
 	}
 
-	public Transaction(int id, int savingID, int amount, String description){
+	public Transaction(int id, int savingID, BigDecimal aAmount, String description){
 		this.id			=id;
 		this.savingID	=savingID;
-		this.amount		=amount;
+		this.mAmount		=aAmount;
 		this.description=description;
 	}
 
@@ -29,8 +32,8 @@ public class Transaction{
 	public int getSavingID(){ return savingID; }
 	public void setSavingID(int savingID){ this.savingID= savingID; }
 
-	public int getAmount(){ return amount; }
-	public void setAmount(int amount){ this.amount=amount; }
+	public BigDecimal getAmount(){ return mAmount; }
+	public void setAmount(BigDecimal aAmount){ mAmount = aAmount; }
 
 	public String getDescription(){ return description; }
 	public void setDescription(String description){ this.description=description; }

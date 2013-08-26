@@ -2,6 +2,7 @@ package beans;
 
 import exceptions.ApplicationLogicException;
 import exceptions.LoginFailureException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import javax.ejb.Remote;
 
@@ -35,12 +36,12 @@ public interface SavingsClientBeanRemote
 	public int createSavingsAccount(int aIDCustomer)
 			throws LoginFailureException, ApplicationLogicException;
 	
-	public void depositIntoSavingsAccount(int aIDSavings)
+	public void depositIntoSavingsAccount(int aIDSavings, BigDecimal aAmount)
 			throws LoginFailureException, ApplicationLogicException;
 	
-	public void withdrawIntoSavingsAccount(int aIDSavings)
+	public void withdrawIntoSavingsAccount(int aIDSavings, BigDecimal aAmount)
 			throws LoginFailureException, ApplicationLogicException;
 	
-	public int getSavingsAccountBalance(int aIDSavings)
+	public BigDecimal getSavingsAccountBalance(int aIDSavings)
 			throws LoginFailureException, ApplicationLogicException;
 }
