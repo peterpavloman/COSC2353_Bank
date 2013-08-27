@@ -32,6 +32,18 @@ public class Main
 	@EJB
 	private static SavingsClientBeanRemote msSavingBean;
 
+	private static Date convertStringToDate(String aString) throws NumberFormatException
+	{
+		StringTokenizer lToken = new StringTokenizer(aString, ",");
+		int lDay = Integer.parseInt(lToken.nextToken());
+		int lMonth = Integer.parseInt(lToken.nextToken());
+		int lYear = Integer.parseInt(lToken.nextToken());
+		
+		// TODO: Proper date validation
+		
+		return new Date(lYear - 1900, lMonth - 1, lDay);
+	}
+
 	private static int testGetSelection()
 	{
 		String lInput = "";
@@ -113,7 +125,7 @@ public class Main
 		} while (!flag);
 		while (true)
 		{
-			System.out.println("Operations performed: " 
+			System.out.println("Operations performed: "
 					+ msSavingBean.getOperationCount()
 					+ " out of " + msSavingBean.getOperationCountLimit());
 			System.out.println("1: Create a customer");
@@ -127,151 +139,162 @@ public class Main
 
 			try
 			{
+				if (msSavingBean.getIsLoggedIn() == false)
+				{
+					System.out.println("You have been logged out automatically.");
+					break;
+				}
 				if (lSelection == 1)
-			{
-				try
 				{
-					String fname;
-					String lname;
-					Date DOB;
-					String address;
-					System.out.println("Create a customer");
-					System.out.printf("First Name: ");
-					fname = lReadInput.readLine();
-					System.out.printf("Last Name: ");
-					lname = lReadInput.readLine();
-					System.out.println("Date of Birth (dd,MM,YYYY):");
-					// TODO: Date has to be typecasted correctly to sql date format
-					StringTokenizer lToken = new StringTokenizer(lReadInput.readLine(), ",");
-                                        int lDay = Integer.parseInt(lToken.nextToken());
-                                        int lMonth = Integer.parseInt(lToken.nextToken());
-                                        int lYear = Integer.parseInt(lToken.nextToken());
-                                        DOB = new Date(lYear - 1900, lMonth - 1, lDay);
-                                        System.out.println(DOB.toString());
-                                        System.out.println("Input your address:");
-					address = lReadInput.readLine();
-					if (msSavingBean.createCustomer(fname, lname, DOB, address) > 0)
+					try
 					{
-						System.out.println("Create successful!");
+						String fname;
+						String lname;
+						Date DOB;
+						String address;
+						System.out.println("Create a customer");
+						System.out.printf("First Name: ");
+						fname = lReadInput.readLine();
+						System.out.printf("Last Name: ");
+						lname = lReadInput.readLine();
+						System.out.printf("Date of Birth (dd,MM,YYYY): ");
+						DOB = convertStringToDate(lReadInput.readLine());
+						System.out.printf("Address: ");
+						address = lReadInput.readLine();
+						int lCustomerId = msSavingBean.createCustomer(fname, lname, DOB,
+								address);
+						if (lCustomerId > 0)
+						{
+							System.out.println("Customer successfully created with customer id "
+									+ lCustomerId + "!");
+						}
+						else
+						{
+							System.out.println("Failed to create new customer!");
+						}
 					}
-					else
+					catch (IOException io)
 					{
-						System.out.println("Create fail!");
+						System.out.println(io.getMessage());
 					}
-				}
-				catch (IOException io)
-				{
-					System.out.println(io.getMessage());
-				}
-//				catch (ParseException pe)
-//				{
-//					System.out.println(pe.getMessage());
-//				}
-				catch (ApplicationLogicException lException)
-				{
-					System.out.println("An error has occurred: " + lException.
-							getUserMessage());
-				}
-			}
-			else if (lSelection == 2)
-			{
-				System.out.println("Open a saving account:");
-				int savingAccount;
-				System.out.printf(
-						"Please provide the customer ID to create the saving account for: ");
-				try
-				{
-					savingAccount = Integer.parseInt(lReadInput.readLine());
-					if (msSavingBean.createSavingsAccount(savingAccount) > 0)
+					catch (NumberFormatException lNFException)
 					{
-						System.out.println("Open a saving account successful!");
+						System.out.println(
+								"Error: invalid input!");
 					}
-					else
+					catch (ApplicationLogicException lException)
 					{
-						System.out.println("Open a saving account fail!");
+						System.out.println(
+								"An error has occurred: " + lException.
+								getUserMessage());
 					}
 				}
-				catch (IOException ex)
+				else if (lSelection == 2)
 				{
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-				}
-				catch (NumberFormatException lNFException)
-				{
-					System.out.println("Error: Customer ID must be a number.");
-					continue;
-				}
-				catch (ApplicationLogicException lLogicException)
-				{
-					System.out.println("Error: " + lLogicException.getUserMessage());
-				}
+					System.out.println("Open a saving account:");
+					int lCustomerId;
+					System.out.printf(
+							"Please provide the customer ID to create the saving account for: ");
+					try
+					{
+						lCustomerId = Integer.parseInt(lReadInput.readLine());
+						int lAccountId = msSavingBean.createSavingsAccount(lCustomerId);
+						System.out.println("Saving account successfully created with savings id "
+								+ lAccountId + "!");
+					}
+					catch (IOException ex)
+					{
+						Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
+								null, ex);
+					}
+					catch (NumberFormatException lNFException)
+					{
+						System.out.println(
+								"Error: Customer ID must be a number.");
+						continue;
+					}
+					catch (ApplicationLogicException lLogicException)
+					{
+						System.out.println("Error: " + lLogicException.
+								getUserMessage());
+					}
 
-			}
-			else if (lSelection == 3)
-			{
-				try
-				{
-					System.out.println("Make deposit into Savings account:");
-					System.out.println(
-							"Please provide an account ID which you want to deposit:");
-					int aSavingID = Integer.parseInt(lReadInput.readLine());
-					System.out.println("How much moeny do you want to deposit?");
-					BigDecimal money = BigDecimal.valueOf(Double.parseDouble(
-							lReadInput.readLine()));
-					msSavingBean.depositIntoSavingsAccount(aSavingID, money);
 				}
-				catch (IOException ex)
+				else if (lSelection == 3)
 				{
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-							null, ex);
+					try
+					{
+						System.out.println("Make deposit into Savings account:");
+						System.out.println(
+								"Please provide an account ID which you want to deposit:");
+						int aSavingID = Integer.parseInt(lReadInput.readLine());
+						System.out.println(
+								"How much moeny do you want to deposit?");
+						BigDecimal money = BigDecimal.valueOf(Double.
+								parseDouble(
+								lReadInput.readLine()));
+						msSavingBean.depositIntoSavingsAccount(aSavingID, money);
+					}
+					catch (IOException ex)
+					{
+						Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
+								null, ex);
+					}
+					catch (NumberFormatException lNFException)
+					{
+						System.out.println(
+								"Note:The Account ID and money should be a number.");
+						continue;
+					}
+					catch (ApplicationLogicException lLogicException)
+					{
+						System.out.println("Error: " + lLogicException.
+								getUserMessage());
+					}
 				}
-				catch (NumberFormatException lNFException)
+				else if (lSelection == 4)
 				{
-					System.out.println(
-							"Note:The Account ID and money should be a number.");
-					continue;
-				}
-				catch (ApplicationLogicException lLogicException)
-				{
-					System.out.println("Error: " + lLogicException.getUserMessage());
-				}
-			}
-			else if (lSelection == 4)
-			{
-				try
-				{
-					System.out.println("Make withdrawal from Savings account:");
-					System.out.println("Please provide your saving account ID:");
-					int aIDSaving = Integer.parseInt(lReadInput.readLine());
-					System.out.
-							println("How much money do you want to withdraw?");
-					BigDecimal money = BigDecimal.valueOf(Double.parseDouble(
-							lReadInput.readLine()));
-					msSavingBean.withdrawIntoSavingsAccount(aIDSaving, money);
-				}
-				catch (IOException ex)
-				{
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-							null, ex);
-				}
-				catch (NumberFormatException lNFException)
-				{
-					System.out.println(
-							"Note:The Account ID and money should be a number.");
-					continue;
-				}
-				catch (ApplicationLogicException lLogicException)
-				{
-					System.out.println("Error: " + lLogicException.getUserMessage());
-				}
+					try
+					{
+						System.out.println(
+								"Make withdrawal from Savings account:");
+						System.out.println(
+								"Please provide your saving account ID:");
+						int aIDSaving = Integer.parseInt(lReadInput.readLine());
+						System.out.
+								println(
+								"How much money do you want to withdraw?");
+						BigDecimal money = BigDecimal.valueOf(Double.
+								parseDouble(
+								lReadInput.readLine()));
+						msSavingBean.
+								withdrawIntoSavingsAccount(aIDSaving, money);
+					}
+					catch (IOException ex)
+					{
+						Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
+								null, ex);
+					}
+					catch (NumberFormatException lNFException)
+					{
+						System.out.println(
+								"Note:The Account ID and money should be a number.");
+						continue;
+					}
+					catch (ApplicationLogicException lLogicException)
+					{
+						System.out.println("Error: " + lLogicException.
+								getUserMessage());
+					}
 
-			}
-			else if (lSelection == 5)
-			{
-				try
+				}
+				else if (lSelection == 5)
 				{
-					System.out.println("View balance of Savings account:");
-					System.out.println("Your saving account ID:");
-					int aIDSaving = Integer.parseInt(lReadInput.readLine());
+					try
+					{
+						System.out.println("View balance of Savings account:");
+						System.out.println("Your saving account ID:");
+						int aIDSaving = Integer.parseInt(lReadInput.readLine());
 						System.out.println(
 								"The balance of your saving account is :" + msSavingBean.
 								getSavingsAccountBalance(aIDSaving));
@@ -290,7 +313,8 @@ public class Main
 					}
 					catch (ApplicationLogicException lLogicException)
 					{
-						System.out.println("Error: " + lLogicException.getUserMessage());
+						System.out.println("Error: " + lLogicException.
+								getUserMessage());
 					}
 				}
 				else if (lSelection == 6)

@@ -135,6 +135,8 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
+		mOperationCount++;
+		
 		CustomerDAO lDAO = new CustomerRBD(mDBConnection);
 		Customer lNewCustomer = new Customer(aFirstName, aLastName, aDateOfBirth, aAddress);
 		lDAO.create(lNewCustomer);
@@ -150,6 +152,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
+		mOperationCount++;
 		
 		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
 		
@@ -174,6 +177,8 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
+		mOperationCount++;
+		
 		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
 		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
 		
@@ -195,6 +200,8 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
+		mOperationCount++;
+		
 		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
 		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
 		
@@ -221,6 +228,8 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		{
 			throw new LoginFailureException();
 		}
+		mOperationCount++;
+		
 		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
 		Savings lSavings = lSavingsDAO.get(aIDSavings);
 		return lSavings.getBalance();

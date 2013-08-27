@@ -1,17 +1,13 @@
-Tue Aug 27 13:32:50 EST 2013 : Apache Derby 网络服务器 － 10.9.1.0 - (1344872) 已启动并准备接受端口 1527 上的连接
+Tue Aug 27 14:16:33 EST 2013 : Apache Derby Network Server - 10.9.1.0 - (1344872) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Tue Aug 27 13:33:28 EST 2013:
- 正在使用类加载器 sun.misc.Launcher$AppClassLoader@18d107f 引导数据库
-目录 C:\Users\THINK\Documents\NetBeansProjects\COSC2353_Bank\ACME_Database\ACMEDatabase  中的 Derby 版本 The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872) 实例 a816c00e-0140-bdd4-bd40-ffff82ce460f
-
-java.vendor=Sun Microsystems Inc.
-java.runtime.version=1.6.0_02-b06
-user.dir=C:\Program Files\glassfish-4.0\javadb
-derby.system.home=C:\Users\THINK\Documents\NetBeansProjects\COSC2353_Bank\ACME_Database
-数据库类装入器已启动 － derby.database.classpath=“”
+Tue Aug 27 14:27:30 EST 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance a816c00e-0140-bdfc-c04b-ffffe6142db1 
+on database directory /home/narks/Documents/COSC2353_Bank/ACME_Database/ACMEDatabase  with class loader sun.misc.Launcher$AppClassLoader@bb0620c 
+Loaded from file:/usr/local/glassfish-4.0/javadb/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_25-b15
+user.dir=/usr/local/glassfish-4.0/javadb
+derby.system.home=/home/narks/Documents/COSC2353_Bank/ACME_Database
+Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Tue Aug 27 14:12:11 EST 2013：正在关闭 Derby 引擎
-----------------------------------------------------------------
-Tue Aug 27 14:12:12 EST 2013:
-正在使用类加载器 sun.misc.Launcher$AppClassLoader@18d107f 关闭数据库目录 C:\Users\THINK\Documents\NetBeansProjects\COSC2353_Bank\ACME_Database\ACMEDatabase 上的实例 a816c00e-0140-bdd4-bd40-ffff82ce460f
-----------------------------------------------------------------
+Tue Aug 27 20:46:00 EST 2013: Shutting down Derby engine

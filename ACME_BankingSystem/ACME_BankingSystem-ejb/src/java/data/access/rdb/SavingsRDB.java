@@ -31,7 +31,7 @@ public class SavingsRDB implements SavingsDAO{
 			if(!result.next())
 				throw new ApplicationLogicException("ERROR: Unable to add new saving account.");
 
-			aSavings.setIDCustomer(result.getInt(1));
+			aSavings.setIDSavings(result.getInt(1));
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -110,12 +110,14 @@ public class SavingsRDB implements SavingsDAO{
 			lStatement.setInt(1, aCustomerId);
 			
 			ResultSet lResult = lStatement.executeQuery();
+			lResult.next();
 			return lResult.getInt(1);
 
 		}
 		catch (SQLException sqle){
 			sqle.printStackTrace();
-			throw new ApplicationLogicException("SYSTEM ERROR: SQL exception thrown.");
+			throw new ApplicationLogicException
+					("SYSTEM ERROR: SQL exception thrown when fetching savings account count.");
 		}
 	}
 
