@@ -51,7 +51,7 @@ public class SavingsRDB implements SavingsDAO{
 			if(result.next())
 				return new Savings(result.getInt(1), result.getBigDecimal(2));
 			else
-				throw new ApplicationLogicException("ERROR: Invalid saving ID.");
+				throw new ApplicationLogicException("Invalid saving ID.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -70,7 +70,7 @@ public class SavingsRDB implements SavingsDAO{
 			statement.setInt(3, aSavings.getIDSavings());
 
 			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("ERROR: Unable to update saving account.");
+				throw new ApplicationLogicException("Unable to update saving account.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -91,7 +91,7 @@ public class SavingsRDB implements SavingsDAO{
 			statement.setInt(1, id);
 
 			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("ERROR: Unable to remove the saving account.");
+				throw new ApplicationLogicException("Unable to remove the saving account.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();

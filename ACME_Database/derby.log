@@ -9,3 +9,5 @@ java.runtime.version=1.7.0_25-b15
 user.dir=/usr/local/glassfish-4.0/javadb
 derby.system.home=/home/narks/Documents/COSC2353_Bank/ACME_Database
 Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Tue Aug 27 12:46:37 EST 2013: Shutting down Derby engine

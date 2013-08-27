@@ -171,8 +171,8 @@ public class Main
 			{
 				System.out.println("Open a saving account:");
 				int savingAccount;
-				System.out.println(
-						"Please provide the saving account number which you want to open:");
+				System.out.printf(
+						"Please provide the customer ID to create the saving account for: ");
 				try
 				{
 					savingAccount = Integer.parseInt(lReadInput.readLine());
@@ -187,18 +187,16 @@ public class Main
 				}
 				catch (IOException ex)
 				{
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-							null, ex);
+					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 				}
 				catch (NumberFormatException lNFException)
 				{
-					System.out.println("Note:The Account ID is an Integer.");
+					System.out.println("Error: Customer ID must be a number.");
 					continue;
 				}
-				catch (ApplicationLogicException ex)
+				catch (ApplicationLogicException lLogicException)
 				{
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-							null, ex);
+					System.out.println("Error: " + lLogicException.getUserMessage());
 				}
 
 			}
@@ -226,10 +224,9 @@ public class Main
 							"Note:The Account ID and money should be a number.");
 					continue;
 				}
-				catch (ApplicationLogicException ex)
+				catch (ApplicationLogicException lLogicException)
 				{
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-							null, ex);
+					System.out.println("Error: " + lLogicException.getUserMessage());
 				}
 			}
 			else if (lSelection == 4)
@@ -256,10 +253,9 @@ public class Main
 							"Note:The Account ID and money should be a number.");
 					continue;
 				}
-				catch (ApplicationLogicException ex)
+				catch (ApplicationLogicException lLogicException)
 				{
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-							null, ex);
+					System.out.println("Error: " + lLogicException.getUserMessage());
 				}
 
 			}
@@ -286,10 +282,9 @@ public class Main
 								"Note:The Account ID should be a number.");
 						continue;
 					}
-					catch (ApplicationLogicException ex)
+					catch (ApplicationLogicException lLogicException)
 					{
-						Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-								null, ex);
+						System.out.println("Error: " + lLogicException.getUserMessage());
 					}
 				}
 				else if (lSelection == 6)
@@ -301,7 +296,7 @@ public class Main
 			}
 			catch (LoginFailureException lLoginException)
 			{
-				System.out.println("You have been logged out for inactivity.");
+				System.out.println("You have been logged out automatically.");
 				break;
 			}
 		}

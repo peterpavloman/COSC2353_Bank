@@ -26,7 +26,7 @@ public class EmployeeRDB implements EmployeeDAO{
 			ResultSet result= statement.getGeneratedKeys();
 
 			if(!result.next())
-				throw new ApplicationLogicException("ERROR: Unable to add new employee.");
+				throw new ApplicationLogicException("Unable to add new employee.");
 
 			aEmployee.setIDEmployee(result.getInt(1));
 		}catch(SQLException sqle){
@@ -59,7 +59,7 @@ public class EmployeeRDB implements EmployeeDAO{
 			if(result.next())
 				return new Employee(result.getString(1), result.getString(2), result.getString(3));
 			else
-				throw new ApplicationLogicException("ERROR: Invalid employee id or password.");
+				throw new ApplicationLogicException("Invalid employee id or password.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -80,7 +80,7 @@ public class EmployeeRDB implements EmployeeDAO{
 			statement.setInt(4, aEmployee.getIDEmployee());
 
 			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("ERROR: Unable to update employee.");
+				throw new ApplicationLogicException("Unable to update employee.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -101,7 +101,7 @@ public class EmployeeRDB implements EmployeeDAO{
 			statement.setInt(1, id);
 
 			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("ERROR: Unable to remove employee.");
+				throw new ApplicationLogicException("Unable to remove employee.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();

@@ -27,7 +27,7 @@ public class TransactionRDB implements TransactionDAO{
 			ResultSet result= statement.getGeneratedKeys();
 
 			if(!result.next())
-				throw new ApplicationLogicException("ERROR: Unable to add new transaction.");
+				throw new ApplicationLogicException("Unable to add new transaction.");
 
 			aTransaction.setID(result.getInt(1));
 
@@ -49,7 +49,7 @@ public class TransactionRDB implements TransactionDAO{
 			if(result.next())
 				return new Transaction(result.getInt(1), result.getInt(2), result.getBigDecimal(3), result.getString(4));
 			else
-				throw new ApplicationLogicException("ERROR: Invalid transation ID.");
+				throw new ApplicationLogicException("Invalid transation ID.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -68,7 +68,7 @@ public class TransactionRDB implements TransactionDAO{
 			statement.setString(3, aTransaction.getDescription());
 
 			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("ERROR: Unable to update transaction.");
+				throw new ApplicationLogicException("Unable to update transaction.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -90,7 +90,7 @@ public class TransactionRDB implements TransactionDAO{
 			statement.setInt(1, id);
 
 			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("ERROR: Unable to remove transation.");
+				throw new ApplicationLogicException("Unable to remove transation.");
 
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
