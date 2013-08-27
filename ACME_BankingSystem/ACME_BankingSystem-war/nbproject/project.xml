@@ -5,7 +5,6 @@
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
             <name>ACME_BankingSystem-war</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
-            <explicit-platform explicit-source-supported="true"/>
             <web-module-libraries>
                 <library dirs="100">
                     <file>${reference.ACME_BankingSystem-ejb.dist}</file>

@@ -102,8 +102,21 @@ public class SavingsRDB implements SavingsDAO{
 	@Override
 	public int getSavingsAccountCount(int aCustomerId) throws ApplicationLogicException
 	{
-		// TODO - something like SELECT COUNT(*) (SELECT ACCOUNTS WHERE CUSTOMER_ID = SAVINGS_ID)
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		try
+		{
+			PreparedStatement lStatement = connection.prepareStatement(
+				"SELECT COUNT(*) FROM ACMEBANK.SAVINGS WHERE ID_CUSTOMER = ?");
+
+			lStatement.setInt(1, aCustomerId);
+			
+			ResultSet lResult = lStatement.executeQuery();
+			return lResult.getInt(1);
+
+		}
+		catch (SQLException sqle){
+			sqle.printStackTrace();
+			throw new ApplicationLogicException("SYSTEM ERROR: SQL exception thrown.");
+		}
 	}
 
 }
