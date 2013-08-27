@@ -4,6 +4,7 @@ import data.Employee;
 import data.access.EmployeeDAO;
 import exceptions.ApplicationLogicException;
 import java.sql.*;
+import security.Common;
 
 public class EmployeeRDB implements EmployeeDAO{
 	private Connection connection;
@@ -47,7 +48,7 @@ public class EmployeeRDB implements EmployeeDAO{
 			if(password!= null){
 				statement= connection.prepareStatement("SELECT FIRSTNAME, LASTNAME,"
 					+ "PASSWORD FROM ACMEBANK.EMPLOYEE WHERE ID_EMPLOYEE= ? AND PASSWORD= ?");
-				statement.setString(2, password);
+				statement.setString(2, Common.getInstance().md5(password));
 			}else
 				statement= connection.prepareStatement("SELECT FIRSTNAME,"
 					+ "LASTNAME, PASSWORD FROM ACMEBANK.EMPLOYEE WHERE ID_EMPLOYEE= ?");
@@ -57,7 +58,7 @@ public class EmployeeRDB implements EmployeeDAO{
 			ResultSet result= statement.executeQuery();
 
 			if(result.next())
-				return new Employee(result.getString(1), result.getString(2), result.getString(3));
+				return new Employee(result.getString(1), result.getString(2), result.getString(3), true);
 			else
 				throw new ApplicationLogicException("Invalid employee id or password.");
 

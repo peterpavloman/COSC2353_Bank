@@ -25,10 +25,14 @@ public class Employee
      */
     public Employee(String aFirstName, String aLastName, String aPassword)
     {
-        mFirstName = aFirstName;
-        mLastName = aLastName;
-		mPassword = Common.getInstance().md5(aPassword);
+		this(aFirstName, aLastName, aPassword, false);
     }
+
+	public Employee(String aFirstName, String aLastName, String aPassword, boolean isEncrypted){
+		 mFirstName	= aFirstName;
+		 mLastName	= aLastName;
+		 this.setPassword(aPassword, isEncrypted);
+	}
 
     /**
      *
@@ -70,9 +74,17 @@ public class Employee
         mIDEmployee = aIDEmployee;
     }
     public String getPassword() { return mPassword; }
+
+	public void setPassword(String password, boolean isEncrypted){
+		if(isEncrypted)
+			mPassword= password;
+		else
+			mPassword = Common.getInstance().md5(password);
+	}
+
 	public void setPassword(String aPassword)
 	{
-		mPassword = Common.getInstance().md5(aPassword);
+		this.setPassword(aPassword, false);
 	}
 }
 
