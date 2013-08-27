@@ -1,22 +1,23 @@
 package data;
 
+import security.Common;
 /**
  * Employee object used by application logic.
- * 
+ *
  * @author Peter (s3286430
  */
-public class Employee 
+public class Employee
 {
     private int mIDEmployee;
     private String mFirstName;
     private String mLastName;
 	// Probably not the best idea to have passwords stored as plaintext...
 	private String mPassword;
-    
+
     /**
      * Constructor for Employee class.
 	 * Initializes default required values.
-     * 
+     *
      * @param aFirstName
      * @param aLastName
 	 * @param aPassword Password (in plaintext - must change later to something
@@ -26,11 +27,11 @@ public class Employee
     {
         mFirstName = aFirstName;
         mLastName = aLastName;
-		mPassword = aPassword;
+		mPassword = Common.getInstance().md5(aPassword);
     }
-    
+
     /**
-     * 
+     *
      * @return
      */
     public String getFirstName() { return mFirstName; }
@@ -55,7 +56,7 @@ public class Employee
      * @param aLastName
      * @see getLastName()
      */
-    public void setLastName(String aLastName) 
+    public void setLastName(String aLastName)
     {
         mLastName = aLastName;
     }
@@ -71,7 +72,7 @@ public class Employee
     public String getPassword() { return mPassword; }
 	public void setPassword(String aPassword)
 	{
-		mPassword = aPassword;
+		mPassword = Common.getInstance().md5(aPassword);
 	}
 }
 
