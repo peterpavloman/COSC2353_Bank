@@ -27,11 +27,7 @@ public class Employee
         mLastName = aLastName;
 		mPassword = aPassword;
     }
-
-    /**
-     *
-     * @return
-     */
+	
     public String getFirstName() { return mFirstName; }
     /**
      * Mutator for FirstName.
@@ -68,9 +64,10 @@ public class Employee
         mIDEmployee = aIDEmployee;
     }
     public String getPassword() { return mPassword; }
+
 	public void setPassword(String aPassword)
 	{
-		mPassword = aPassword;
+		this.setPassword(aPassword);
 	}
 }
 
