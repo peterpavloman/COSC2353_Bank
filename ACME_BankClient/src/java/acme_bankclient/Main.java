@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -141,8 +142,13 @@ public class Main
 					lname = lReadInput.readLine();
 					System.out.println("Date of Birth (dd,MM,YYYY):");
 					// TODO: Date has to be typecasted correctly to sql date format
-					DOB = (Date) new SimpleDateFormat("dd,MM,YYYY").parse(
-							lReadInput.readLine());
+					StringTokenizer lToken = new StringTokenizer(lReadInput.readLine(), ",");
+                                        int lDay = Integer.parseInt(lToken.nextToken());
+                                        int lMonth = Integer.parseInt(lToken.nextToken());
+                                        int lYear = Integer.parseInt(lToken.nextToken());
+                                        DOB = new Date(lYear - 1900, lMonth - 1, lDay);
+                                        System.out.println(DOB.toString());
+                                        System.out.println("Input your address:");
 					address = lReadInput.readLine();
 					if (msSavingBean.createCustomer(fname, lname, DOB, address) > 0)
 					{
@@ -157,10 +163,10 @@ public class Main
 				{
 					System.out.println(io.getMessage());
 				}
-				catch (ParseException pe)
-				{
-					System.out.println(pe.getMessage());
-				}
+//				catch (ParseException pe)
+//				{
+//					System.out.println(pe.getMessage());
+//				}
 				catch (ApplicationLogicException lException)
 				{
 					System.out.println("An error has occurred: " + lException.
