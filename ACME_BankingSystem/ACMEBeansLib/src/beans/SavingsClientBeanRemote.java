@@ -16,6 +16,7 @@ public interface SavingsClientBeanRemote
 	public boolean login(int aIDEmployee, String aPassword);
 	
 	public int getOperationCount();
+	public int getOperationCountLimit();
 	
 	public boolean getIsLoggedIn();
 	

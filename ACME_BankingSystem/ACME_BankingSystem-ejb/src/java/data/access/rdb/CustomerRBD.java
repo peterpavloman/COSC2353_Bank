@@ -37,7 +37,7 @@ public class CustomerRBD implements CustomerDAO
 
             lStatement.setString(1, aCustomer.getFirstName());
             lStatement.setString(2, aCustomer.getLastName());
-            lStatement.setString(3, aCustomer.getDateOfBirth().toString());
+            lStatement.setDate(3, aCustomer.getDateOfBirth());
             lStatement.setString(4, aCustomer.getAddress());
 
             lStatement.executeUpdate();
@@ -93,7 +93,7 @@ public class CustomerRBD implements CustomerDAO
 
             lStatement.setString(1, aCustomer.getFirstName());
             lStatement.setString(2, aCustomer.getLastName());
-            lStatement.setString(3, aCustomer.getDateOfBirth().toString());
+            lStatement.setDate(3, aCustomer.getDateOfBirth());
             lStatement.setString(4, aCustomer.getAddress());
 
 			lStatement.setInt(5, aCustomer.getIDCustomer());

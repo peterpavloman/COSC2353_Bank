@@ -116,6 +116,12 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 	}
 
 	@Override
+	public int getOperationCountLimit()
+	{
+		return MAX_OPERATIONS_PER_SESSION;
+	}
+	
+	@Override
 	public boolean getIsLoggedIn()
 	{
 		return mLoggedIn;
