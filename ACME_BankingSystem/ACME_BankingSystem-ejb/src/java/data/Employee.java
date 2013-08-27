@@ -1,6 +1,4 @@
 package data;
-
-import security.Common;
 /**
  * Employee object used by application logic.
  *
@@ -27,7 +25,7 @@ public class Employee
     {
         mFirstName = aFirstName;
         mLastName = aLastName;
-		mPassword = Common.getInstance().md5(aPassword);
+		mPassword = aPassword;
     }
 
     /**
@@ -72,7 +70,7 @@ public class Employee
     public String getPassword() { return mPassword; }
 	public void setPassword(String aPassword)
 	{
-		mPassword = Common.getInstance().md5(aPassword);
+		mPassword = aPassword;
 	}
 }
 
