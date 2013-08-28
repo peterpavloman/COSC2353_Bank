@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import javax.ejb.Stateful;
 import javax.sql.DataSource;
 
@@ -44,12 +46,19 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 	private int mOperationCount;
 	private long mLoginTime;
 	
+
     @PostConstruct
-    public void initialize()
-    {
+	public void postConstruct()
+	{
 		mLoggedIn = false;
 		mOperationCount = 0;
 		mLoginTime = new java.util.Date().getTime();
+		postActivate();
+	}
+	
+	@PostActivate
+    public void postActivate()
+    {
         try
         {
             mDBConnection = mDataSource.getConnection();
@@ -60,6 +69,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
         }
     }
 
+	@PrePassivate
     @PreDestroy
     public void close()
     {

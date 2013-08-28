@@ -9,93 +9,135 @@ import data.*;
 import data.access.*;
 import exceptions.ApplicationLogicException;
 
-public class SavingsRDB implements SavingsDAO{
+public class SavingsRDB implements SavingsDAO
+{
+
 	private Connection connection;
 
-	public SavingsRDB(Connection conn){ connection= conn; }
+	public SavingsRDB(Connection conn)
+	{
+		connection = conn;
+	}
 
 	@Override
-	public void create(Savings aSavings) throws ApplicationLogicException{
-		try{
-			PreparedStatement statement= connection.prepareStatement(
-				"INSERT INTO ACMEBANK.SAVINGS(ID_CUSTOMER, BALANCE) "
-				+ "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
+	public void create(Savings aSavings) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement statement = connection.prepareStatement(
+					"INSERT INTO ACMEBANK.SAVINGS(ID_CUSTOMER, BALANCE) "
+					+ "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			statement.setInt(1, aSavings.getIDCustomer());
 			statement.setBigDecimal(2, aSavings.getBalance());
 
 			statement.executeUpdate();
 
-			ResultSet result= statement.getGeneratedKeys();
+			ResultSet result = statement.getGeneratedKeys();
 
-			if(!result.next())
-				throw new ApplicationLogicException("ERROR: Unable to add new saving account.");
+			if (!result.next())
+			{
+				throw new ApplicationLogicException(
+						"ERROR: Unable to add new saving account.");
+			}
 
 			aSavings.setIDSavings(result.getInt(1));
 
-		}catch(SQLException sqle){
+		}
+		catch (SQLException sqle)
+		{
 			sqle.printStackTrace();
-			throw new ApplicationLogicException("SYSTEM ERROR: SQL exception thrown.");
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown.");
 		}
 	}
 
 	@Override
-	public Savings get(int aIDSavings) throws ApplicationLogicException{
-		try{
-			PreparedStatement statement= connection.prepareStatement(
-				"SELECT ID_CUSTOMER, BALANCE FROM ACMEBANK.SAVINGS WHERE ID_SAVINGS=?");
+	public Savings get(int aIDSavings) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement statement = connection.prepareStatement(
+					"SELECT ID_CUSTOMER, BALANCE FROM ACMEBANK.SAVINGS WHERE ID_SAVINGS = ?");
 
 			statement.setInt(1, aIDSavings);
-			ResultSet result= statement.executeQuery();
+			ResultSet result = statement.executeQuery();
 
-			if(result.next())
-				return new Savings(result.getInt(1), result.getBigDecimal(2));
+			if (result.next())
+			{
+				Savings lSavings = new Savings(result.getInt(1), result.getBigDecimal(2));
+				lSavings.setIDSavings(aIDSavings);
+				return lSavings;
+			}
 			else
+			{
 				throw new ApplicationLogicException("Invalid saving ID.");
+			}
 
-		}catch(SQLException sqle){
+		}
+		catch (SQLException sqle)
+		{
 			sqle.printStackTrace();
-			throw new ApplicationLogicException("SYSTEM ERROR: SQL exception thrown.");
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown.");
 		}
 	}
 
 	@Override
-	public void update(Savings aSavings) throws ApplicationLogicException{
-		try{
-			PreparedStatement statement= connection.prepareStatement(
-				"UPDATE ACMEBANK.SAVINGS SET ID_CUSTOMER= ?, BALANCE= ? WHERE ID_SAVINGS= ?");
+	public void update(Savings aSavings) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement lStatement = connection.prepareStatement(
+					"UPDATE ACMEBANK.SAVINGS SET ID_CUSTOMER = ?, BALANCE = ? WHERE ID_SAVINGS= ?");
 
-			statement.setInt(1, aSavings.getIDCustomer());
-			statement.setBigDecimal(2, aSavings.getBalance());
-			statement.setInt(3, aSavings.getIDSavings());
+			lStatement.setInt(1, aSavings.getIDCustomer());
+			lStatement.setBigDecimal(2, aSavings.getBalance());
+			lStatement.setInt(3, aSavings.getIDSavings());
 
-			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("Unable to update saving account.");
+			int lRowsAffected = lStatement.executeUpdate();
+			lStatement.close();
+			if (lRowsAffected == 0)
+			{
+				throw new ApplicationLogicException(
+						"Unable to update saving account.");
+			}
 
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
-			throw new ApplicationLogicException("SYSTEM ERROR: SQL exception thrown.");
+		}
+		catch (SQLException aException)
+		{
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown.");
 		}
 	}
 
 	@Override
-	public void delete(Savings aSavings) throws ApplicationLogicException{
+	public void delete(Savings aSavings) throws ApplicationLogicException
+	{
 		this.delete(aSavings.getIDSavings());
 	}
 
-	public void delete(int id) throws ApplicationLogicException{
-		try{
-			PreparedStatement statement= connection.prepareStatement(
-				"DELETE FROM ACMEBANK.SAVINGS WHERE ID_SAVINGS= ?");
+	public void delete(int id) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement statement = connection.prepareStatement(
+					"DELETE FROM ACMEBANK.SAVINGS WHERE ID_SAVINGS= ?");
 
 			statement.setInt(1, id);
 
-			if(statement.executeUpdate()!= 1)
-				throw new ApplicationLogicException("Unable to remove the saving account.");
+			if (statement.executeUpdate() != 1)
+			{
+				throw new ApplicationLogicException(
+						"Unable to remove the saving account.");
+			}
 
-		}catch(SQLException sqle){
+		}
+		catch (SQLException sqle)
+		{
 			sqle.printStackTrace();
-			throw new ApplicationLogicException("SYSTEM ERROR: SQL exception thrown.");
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown.");
 		}
 	}
 
@@ -105,20 +147,20 @@ public class SavingsRDB implements SavingsDAO{
 		try
 		{
 			PreparedStatement lStatement = connection.prepareStatement(
-				"SELECT COUNT(*) FROM ACMEBANK.SAVINGS WHERE ID_CUSTOMER = ?");
+					"SELECT COUNT(*) FROM ACMEBANK.SAVINGS WHERE ID_CUSTOMER = ?");
 
 			lStatement.setInt(1, aCustomerId);
-			
+
 			ResultSet lResult = lStatement.executeQuery();
 			lResult.next();
 			return lResult.getInt(1);
 
 		}
-		catch (SQLException sqle){
+		catch (SQLException sqle)
+		{
 			sqle.printStackTrace();
-			throw new ApplicationLogicException
-					("SYSTEM ERROR: SQL exception thrown when fetching savings account count.");
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown when fetching savings account count.");
 		}
 	}
-
 }

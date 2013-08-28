@@ -7,6 +7,7 @@ package acme_bankclient;
 //import beans.CustomerBeanRemote;
 //import beans.EmployeeBeanRemote;
 //import beans.StatefulTestBeanRemote;
+import beans.DebugResetDBSchemaRemote;
 import exceptions.ApplicationLogicException;
 import exceptions.LoginFailureException;
 import java.io.BufferedReader;
@@ -16,8 +17,6 @@ import javax.ejb.EJB;
 import beans.SavingsClientBeanRemote;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +30,9 @@ public class Main
 
 	@EJB
 	private static SavingsClientBeanRemote msSavingBean;
+	
+	@EJB
+	private static DebugResetDBSchemaRemote msTestBean;
 
 	private static Date convertStringToDate(String aString) throws NumberFormatException
 	{
@@ -141,7 +143,7 @@ public class Main
 			{
 				if (msSavingBean.getIsLoggedIn() == false)
 				{
-					System.out.println("You have been logged out automatically.");
+					System.out.println("Your session has expired. You should take a break, and then restart the client.");
 					break;
 				}
 				if (lSelection == 1)
@@ -224,12 +226,12 @@ public class Main
 				{
 					try
 					{
-						System.out.println("Make deposit into Savings account:");
-						System.out.println(
-								"Please provide an account ID which you want to deposit:");
+						System.out.println("Make deposit into Savings account");
+						System.out.printf(
+								"Please provide an account ID which you want to deposit: ");
 						int aSavingID = Integer.parseInt(lReadInput.readLine());
-						System.out.println(
-								"How much moeny do you want to deposit?");
+						System.out.printf(
+								"How much money to deposit: ");
 						BigDecimal money = BigDecimal.valueOf(Double.
 								parseDouble(
 								lReadInput.readLine()));
@@ -326,7 +328,7 @@ public class Main
 			}
 			catch (LoginFailureException lLoginException)
 			{
-				System.out.println("You have been logged out automatically.");
+				System.out.println("Your session has expired. You should take a break, and then restart the client.");
 				break;
 			}
 		}
@@ -337,6 +339,9 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
+		// For testing purposes only
+		msTestBean.resetTables();
+		
 		printMenu();
 	}
 }
