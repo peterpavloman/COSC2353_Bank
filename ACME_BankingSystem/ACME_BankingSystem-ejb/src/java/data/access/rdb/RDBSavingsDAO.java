@@ -27,10 +27,11 @@ public class RDBSavingsDAO implements SavingsDAO
 			// First, we should check if the customer exists
 			PreparedStatement lStatement = mDBConnection.prepareStatement(
 					"SELECT count(1) FROM "
-					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?;");
+					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?");
 			lStatement.setInt(1, aSavings.getIDCustomer());
 
 			ResultSet lResult = lStatement.executeQuery();
+			lResult.next();
 			if (lResult.getInt(1) == 0)
 			{
 				throw new ApplicationLogicException(

@@ -227,12 +227,13 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		TransactionDAO lTransactionDAO = new RDBTransactionDAO(mDBConnection);
 		
 		Savings lSavings = lSavingsDAO.get(aIDSavings);
-		lSavings.setBalance(lSavings.getBalance().subtract(aAmount));
-		
-		if (lSavings.getBalance().compareTo(aAmount) < 0)
+		BigDecimal lNewBalance = lSavings.getBalance().subtract(aAmount); 
+		if (lNewBalance.compareTo(BigDecimal.ZERO) < 0)
 		{
 			throw new ApplicationLogicException("Account does not have sufficient funds!");
 		}
+		
+		lSavings.setBalance(lNewBalance);
 		
 		Transaction lTransaction = new Transaction(aIDSavings, aAmount, 
 				"Withdraw from savings account");

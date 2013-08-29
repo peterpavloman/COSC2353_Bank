@@ -54,14 +54,14 @@ public class DebugResetDBSchema implements DebugResetDBSchemaRemote
 					"CREATE TABLE ACMEBANK.savings ("
 					+ "id_savings INT NOT null PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
 					+ "id_customer INT NOT null,"
-					+ "balance DECIMAL, FOREIGN KEY (id_customer) REFERENCES ACMEBANK.customer(id_customer))");
+					+ "balance DECIMAL(19, 4), FOREIGN KEY (id_customer) REFERENCES ACMEBANK.customer(id_customer))");
 			lStatement.executeUpdate();
 
 			lStatement = mDBConnection.prepareStatement(
 					"CREATE TABLE ACMEBANK.banktransaction ("
 					+ "id_banktransaction INT NOT null PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
 					+ "id_savings INT NOT null,"
-					+ "amount DECIMAL,"
+					+ "amount DECIMAL(19, 4),"
 					+ "description varchar(256),"
 					+ "FOREIGN KEY (id_savings) REFERENCES ACMEBANK.savings(id_savings))");
 			lStatement.executeUpdate();

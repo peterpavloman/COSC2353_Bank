@@ -23,6 +23,8 @@ public class Main
 
 	@EJB
 	private static SavingsClientBeanRemote msSavingBean;
+	
+	// Test bean for demo / testing purposes only
 	@EJB
 	private static DebugResetDBSchemaRemote msTestBean;
 
@@ -154,6 +156,7 @@ public class Main
 		try
 		{
 			lCustomerId = Integer.parseInt(aReadInput.readLine());
+			if (lCustomerId < 0) { throw new InvalidInputException(); }
 			int lAccountId = msSavingBean.createSavingsAccount(
 					lCustomerId);
 			System.out.println(
@@ -170,6 +173,11 @@ public class Main
 			System.out.println(
 					"Error: Customer ID must be a number.");
 		}
+		catch (InvalidInputException lException)
+		{
+			System.out.println(
+					"Error: Invalid input!.");
+		}
 		catch (ApplicationLogicException lLogicException)
 		{
 			System.out.println("Error: " + lLogicException.
@@ -185,11 +193,13 @@ public class Main
 			System.out.printf(
 					"Please provide an account ID which you want to deposit: ");
 			int aSavingID = Integer.parseInt(aReadInput.readLine());
+			if (aSavingID < 0) { throw new InvalidInputException(); }
 			System.out.printf(
 					"How much money to deposit: ");
 			BigDecimal money = BigDecimal.valueOf(Double.
 					parseDouble(
 					aReadInput.readLine()));
+			if (money.compareTo(BigDecimal.ZERO) <= 0) { throw new InvalidInputException(); }
 			msSavingBean.depositIntoSavingsAccount(aSavingID, money);
 		}
 		catch (IOException ex)
@@ -207,6 +217,11 @@ public class Main
 			System.out.println("Error: " + lLogicException.
 					getUserMessage());
 		}
+		catch (InvalidInputException lException)
+		{
+			System.out.println(
+					"Error: Invalid input!.");
+		}
 	}
 
 	private static void makeWithdrawal(BufferedReader aReadInput) throws LoginFailureException
@@ -214,16 +229,18 @@ public class Main
 		try
 		{
 			System.out.println(
-					"Make withdrawal from Savings account:");
-			System.out.println(
-					"Please provide your saving account ID:");
+					"Make withdrawal from Savings account");
+			System.out.print(
+					"Please provide your saving account ID: ");
 			int aIDSaving = Integer.parseInt(aReadInput.readLine());
+			if (aIDSaving < 0) { throw new InvalidInputException(); }
 			System.out.
-					println(
-					"How much money to withdraw?");
+					print(
+					"How much money to withdraw: ");
 			BigDecimal money = BigDecimal.valueOf(Double.
 					parseDouble(
 					aReadInput.readLine()));
+			if (money.compareTo(BigDecimal.ZERO) <= 0) { throw new InvalidInputException(); }
 			msSavingBean.
 					withdrawIntoSavingsAccount(aIDSaving, money);
 		}
@@ -235,12 +252,17 @@ public class Main
 		catch (NumberFormatException lNFException)
 		{
 			System.out.println(
-					"Note:The Account ID and money should be a number.");
+					"Note: The Account ID and money should be a number.");
 		}
 		catch (ApplicationLogicException lLogicException)
 		{
 			System.out.println("Error: " + lLogicException.
 					getUserMessage());
+		}
+		catch (InvalidInputException lException)
+		{
+			System.out.println(
+					"Error: Invalid input!.");
 		}
 	}
 
@@ -248,12 +270,13 @@ public class Main
 	{
 		try
 		{
-			System.out.println("View balance of Savings account:");
-			System.out.println("Your saving account ID:");
+			System.out.println("View balance of Savings account: ");
+			System.out.println("Your saving account ID: ");
 			int aIDSaving = Integer.parseInt(aReadInput.readLine());
+			if (aIDSaving < 0) { throw new InvalidInputException(); }
 			System.out.println(
-					"The balance of your saving account is :" + msSavingBean.
-					getSavingsAccountBalance(aIDSaving));
+					"The balance of your saving account is: " + msSavingBean.
+					getSavingsAccountBalance(aIDSaving).toPlainString());
 		}
 		catch (IOException ex)
 		{
@@ -270,6 +293,11 @@ public class Main
 		{
 			System.out.println("Error: " + lLogicException.
 					getUserMessage());
+		}
+		catch (InvalidInputException lException)
+		{
+			System.out.println(
+					"Error: Invalid input!.");
 		}
 	}
 
@@ -313,9 +341,21 @@ public class Main
 		} while (!flag);
 		while (true)
 		{
+			int mOperationCount = msSavingBean.getOperationCount();
+			int mOperationCountLimit = msSavingBean.getOperationCountLimit();
+			// If we hit the limit, confirm with the server that we were logged out
+			if (mOperationCount >= mOperationCountLimit)
+			{
+				if (msSavingBean.getIsLoggedIn() == false)
+				{
+					System.out.println(
+							"Your session has expired. You should take a break, and then restart the client.");
+					break;
+				}
+			}
 			System.out.println("Operations performed: "
-					+ msSavingBean.getOperationCount()
-					+ " out of " + msSavingBean.getOperationCountLimit());
+					+ mOperationCount
+					+ " out of " + mOperationCountLimit);
 			System.out.println("1: Create a customer");
 			System.out.println("2: Open a Savings account");
 			System.out.println("3: Make deposit into Savings account");
@@ -372,7 +412,7 @@ public class Main
 	public static void main(String[] args)
 	{
 		// For testing / demo purposes only
-		msTestBean.resetTables();
+		// msTestBean.resetTables();
 		
 		printMenu();
 	}
