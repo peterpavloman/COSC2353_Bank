@@ -15,12 +15,12 @@ import java.sql.Statement;
  *
  * @author s3286430
  */
-public class CustomerRBD implements CustomerDAO
+public class RDBCustomerDAO implements CustomerDAO
 {
 
 	private Connection mDBConnection;
 
-	public CustomerRBD(Connection aDBConnection)
+	public RDBCustomerDAO(Connection aDBConnection)
 	{
 		mDBConnection = aDBConnection;
 	}

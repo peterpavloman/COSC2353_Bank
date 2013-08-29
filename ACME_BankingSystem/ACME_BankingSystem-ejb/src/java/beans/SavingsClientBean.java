@@ -8,10 +8,10 @@ import data.access.CustomerDAO;
 import data.access.EmployeeDAO;
 import data.access.SavingsDAO;
 import data.access.TransactionDAO;
-import data.access.rdb.CustomerRBD;
-import data.access.rdb.EmployeeRDB;
-import data.access.rdb.SavingsRDB;
-import data.access.rdb.TransactionRDB;
+import data.access.rdb.RDBCustomerDAO;
+import data.access.rdb.RDBEmployeeDAO;
+import data.access.rdb.RDBSavingsDAO;
+import data.access.rdb.RDBTransactionDAO;
 import exceptions.ApplicationLogicException;
 import exceptions.LoginFailureException;
 import java.math.BigDecimal;
@@ -103,7 +103,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		mLoginTime = new java.util.Date().getTime();
 		try
         {
-            EmployeeDAO lDAO = new EmployeeRDB(mDBConnection);
+            EmployeeDAO lDAO = new RDBEmployeeDAO(mDBConnection);
             Employee lEmployee = lDAO.get(aIDEmployee);
 			
 			if (lEmployee.getPassword().equals(aPassword))
@@ -134,6 +134,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 	@Override
 	public boolean getIsLoggedIn()
 	{
+		checkLoginExpired();
 		return mLoggedIn;
 	}
 
@@ -147,7 +148,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		}
 		mOperationCount++;
 		
-		CustomerDAO lDAO = new CustomerRBD(mDBConnection);
+		CustomerDAO lDAO = new RDBCustomerDAO(mDBConnection);
 		Customer lNewCustomer = new Customer(aFirstName, aLastName, aDateOfBirth, aAddress);
 		lDAO.create(lNewCustomer);
 		
@@ -164,7 +165,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		}
 		mOperationCount++;
 		
-		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
 		
 		// Enforce maximum of 2 savings account per customer
 		int lAccountCount = lSavingsDAO.getSavingsAccountCount(aIDCustomer);
@@ -194,8 +195,8 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 			throw new ApplicationLogicException("Invalid deposit amount!");
 		}
 		
-		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
-		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
+		TransactionDAO lTransactionDAO = new RDBTransactionDAO(mDBConnection);
 		
 		Savings lSavings = lSavingsDAO.get(aIDSavings);
 		lSavings.setBalance(lSavings.getBalance().add(aAmount));
@@ -222,8 +223,8 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 			throw new ApplicationLogicException("Invalid withdraw amount!");
 		}
 		
-		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
-		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
+		TransactionDAO lTransactionDAO = new RDBTransactionDAO(mDBConnection);
 		
 		Savings lSavings = lSavingsDAO.get(aIDSavings);
 		lSavings.setBalance(lSavings.getBalance().subtract(aAmount));
@@ -250,7 +251,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		}
 		mOperationCount++;
 		
-		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
 		Savings lSavings = lSavingsDAO.get(aIDSavings);
 		return lSavings.getBalance();
 	}

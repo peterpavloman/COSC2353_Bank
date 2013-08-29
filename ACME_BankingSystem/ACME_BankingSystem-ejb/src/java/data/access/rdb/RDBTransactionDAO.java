@@ -9,12 +9,12 @@ import data.*;
 import data.access.*;
 import exceptions.ApplicationLogicException;
 
-public class TransactionRDB implements TransactionDAO
+public class RDBTransactionDAO implements TransactionDAO
 {
 
 	private Connection connection;
 
-	public TransactionRDB(Connection conn)
+	public RDBTransactionDAO(Connection conn)
 	{
 		connection = conn;
 	}

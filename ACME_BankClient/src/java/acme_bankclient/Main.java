@@ -26,16 +26,31 @@ public class Main
 	@EJB
 	private static DebugResetDBSchemaRemote msTestBean;
 
-	private static Date convertStringToDate(String aString) throws NumberFormatException
+	private static Date convertStringToDate(String aString) throws InvalidInputException
 	{
-		StringTokenizer lToken = new StringTokenizer(aString, ",");
-		int lDay = Integer.parseInt(lToken.nextToken());
-		int lMonth = Integer.parseInt(lToken.nextToken());
-		int lYear = Integer.parseInt(lToken.nextToken());
+		try
+		{
+			StringTokenizer lToken = new StringTokenizer(aString, ",");
+			int lDay = Integer.parseInt(lToken.nextToken());
+			int lMonth = Integer.parseInt(lToken.nextToken());
+			int lYear = Integer.parseInt(lToken.nextToken());
 
-		// TODO: Proper date validation
-
-		return new Date(lYear - 1900, lMonth - 1, lDay);
+			// Terrible hack, but should work for validation
+			Date lDate = new Date(lYear - 1900, lMonth - 1, lDay);
+			if (lDate.getYear() != lYear - 1900
+					|| lDate.getMonth() != lMonth - 1
+					|| lDate.getDate() != lDay)
+			{
+				throw new InvalidInputException();
+			}
+				
+			return lDate;
+		}
+		catch (Exception aException)
+		{
+			throw new InvalidInputException();
+		}
+		
 	}
 
 	private static int testGetSelection()
@@ -90,12 +105,15 @@ public class Main
 			System.out.println("Create a customer");
 			System.out.printf("First Name: ");
 			fname = aReadInput.readLine();
+			if (fname.length() == 0) { throw new InvalidInputException(); }
 			System.out.printf("Last Name: ");
 			lname = aReadInput.readLine();
+			if (lname.length() == 0) { throw new InvalidInputException(); }
 			System.out.printf("Date of Birth (dd,MM,YYYY): ");
 			DOB = convertStringToDate(aReadInput.readLine());
 			System.out.printf("Address: ");
 			address = aReadInput.readLine();
+			if (address.length() == 0) { throw new InvalidInputException(); }
 			int lCustomerId = msSavingBean.createCustomer(fname,
 					lname, DOB,
 					address);
@@ -114,7 +132,7 @@ public class Main
 		{
 			System.out.println(io.getMessage());
 		}
-		catch (NumberFormatException lNFException)
+		catch (InvalidInputException lException)
 		{
 			System.out.println(
 					"Error: invalid input!");

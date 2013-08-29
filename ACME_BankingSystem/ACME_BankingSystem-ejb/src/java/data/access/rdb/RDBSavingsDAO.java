@@ -9,14 +9,14 @@ import data.*;
 import data.access.*;
 import exceptions.ApplicationLogicException;
 
-public class SavingsRDB implements SavingsDAO
+public class RDBSavingsDAO implements SavingsDAO
 {
 
-	private Connection connection;
+	private Connection mDBConnection;
 
-	public SavingsRDB(Connection conn)
+	public RDBSavingsDAO(Connection conn)
 	{
-		connection = conn;
+		mDBConnection = conn;
 	}
 
 	@Override
@@ -24,24 +24,37 @@ public class SavingsRDB implements SavingsDAO
 	{
 		try
 		{
-			PreparedStatement statement = connection.prepareStatement(
+			// First, we should check if the customer exists
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
+					"SELECT count(1) FROM "
+					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?;");
+			lStatement.setInt(1, aSavings.getIDCustomer());
+
+			ResultSet lResult = lStatement.executeQuery();
+			if (lResult.getInt(1) == 0)
+			{
+				throw new ApplicationLogicException(
+						"Customer ID does not exist!");
+			}
+
+			lStatement = mDBConnection.prepareStatement(
 					"INSERT INTO ACMEBANK.SAVINGS(ID_CUSTOMER, BALANCE) "
 					+ "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
 
-			statement.setInt(1, aSavings.getIDCustomer());
-			statement.setBigDecimal(2, aSavings.getBalance());
+			lStatement.setInt(1, aSavings.getIDCustomer());
+			lStatement.setBigDecimal(2, aSavings.getBalance());
 
-			statement.executeUpdate();
+			lStatement.executeUpdate();
 
-			ResultSet result = statement.getGeneratedKeys();
+			lResult = lStatement.getGeneratedKeys();
 
-			if (!result.next())
+			if (!lResult.next())
 			{
 				throw new ApplicationLogicException(
-						"ERROR: Unable to add new saving account.");
+						"Unable to add new saving account.");
 			}
 
-			aSavings.setIDSavings(result.getInt(1));
+			aSavings.setIDSavings(lResult.getInt(1));
 
 		}
 		catch (SQLException sqle)
@@ -57,7 +70,7 @@ public class SavingsRDB implements SavingsDAO
 	{
 		try
 		{
-			PreparedStatement statement = connection.prepareStatement(
+			PreparedStatement statement = mDBConnection.prepareStatement(
 					"SELECT ID_CUSTOMER, BALANCE FROM ACMEBANK.SAVINGS WHERE ID_SAVINGS = ?");
 
 			statement.setInt(1, aIDSavings);
@@ -65,7 +78,8 @@ public class SavingsRDB implements SavingsDAO
 
 			if (result.next())
 			{
-				Savings lSavings = new Savings(result.getInt(1), result.getBigDecimal(2));
+				Savings lSavings = new Savings(result.getInt(1), result.
+						getBigDecimal(2));
 				lSavings.setIDSavings(aIDSavings);
 				return lSavings;
 			}
@@ -88,7 +102,7 @@ public class SavingsRDB implements SavingsDAO
 	{
 		try
 		{
-			PreparedStatement lStatement = connection.prepareStatement(
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
 					"UPDATE ACMEBANK.SAVINGS SET ID_CUSTOMER = ?, BALANCE = ? WHERE ID_SAVINGS= ?");
 
 			lStatement.setInt(1, aSavings.getIDCustomer());
@@ -121,7 +135,7 @@ public class SavingsRDB implements SavingsDAO
 	{
 		try
 		{
-			PreparedStatement statement = connection.prepareStatement(
+			PreparedStatement statement = mDBConnection.prepareStatement(
 					"DELETE FROM ACMEBANK.SAVINGS WHERE ID_SAVINGS= ?");
 
 			statement.setInt(1, id);
@@ -146,7 +160,7 @@ public class SavingsRDB implements SavingsDAO
 	{
 		try
 		{
-			PreparedStatement lStatement = connection.prepareStatement(
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
 					"SELECT COUNT(*) FROM ACMEBANK.SAVINGS WHERE ID_CUSTOMER = ?");
 
 			lStatement.setInt(1, aCustomerId);

@@ -5,12 +5,12 @@ import data.access.EmployeeDAO;
 import exceptions.ApplicationLogicException;
 import java.sql.*;
 
-public class EmployeeRDB implements EmployeeDAO
+public class RDBEmployeeDAO implements EmployeeDAO
 {
 
 	private Connection connection;
 
-	public EmployeeRDB(Connection conn)
+	public RDBEmployeeDAO(Connection conn)
 	{
 		connection = conn;
 	}
