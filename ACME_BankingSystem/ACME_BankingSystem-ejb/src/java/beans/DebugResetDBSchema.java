@@ -65,20 +65,20 @@ public class DebugResetDBSchema implements DebugResetDBSchemaRemote
 					+ "description varchar(256),"
 					+ "FOREIGN KEY (id_savings) REFERENCES ACMEBANK.savings(id_savings))");
 			lStatement.executeUpdate();
-			
+
 			lStatement = mDBConnection.prepareStatement(
 					"INSERT INTO ACMEBANK.EMPLOYEE(FIRSTNAME, LASTNAME, PASSWORD) "
 					+ "VALUES(?, ?, ?)");
-			
+
 			lStatement.setString(1, "Gadriel");
 			lStatement.setString(2, "Smith");
 			lStatement.setString(3, "secret");
 			lStatement.executeUpdate();
-			
+
 			lStatement.setString(1, "Bob");
 			lStatement.setString(2, "Slayer");
 			lStatement.setString(3, "supersecret");
-			lStatement.executeUpdate();	
+			lStatement.executeUpdate();
 		}
 		catch (SQLException aException)
 		{

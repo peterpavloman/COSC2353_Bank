@@ -189,6 +189,11 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		}
 		mOperationCount++;
 		
+		if (aAmount.compareTo(BigDecimal.ZERO) <= 0)
+		{
+			throw new ApplicationLogicException("Invalid deposit amount!");
+		}
+		
 		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
 		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
 		
@@ -211,6 +216,11 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 			throw new LoginFailureException();
 		}
 		mOperationCount++;
+
+		if (aAmount.compareTo(BigDecimal.ZERO) <= 0)
+		{
+			throw new ApplicationLogicException("Invalid withdraw amount!");
+		}
 		
 		SavingsDAO lSavingsDAO = new SavingsRDB(mDBConnection);
 		TransactionDAO lTransactionDAO = new TransactionRDB(mDBConnection);
@@ -218,7 +228,7 @@ public class SavingsClientBean implements SavingsClientBeanRemote
 		Savings lSavings = lSavingsDAO.get(aIDSavings);
 		lSavings.setBalance(lSavings.getBalance().subtract(aAmount));
 		
-		if (lSavings.getBalance().compareTo(BigDecimal.ZERO) < 0)
+		if (lSavings.getBalance().compareTo(aAmount) < 0)
 		{
 			throw new ApplicationLogicException("Account does not have sufficient funds!");
 		}

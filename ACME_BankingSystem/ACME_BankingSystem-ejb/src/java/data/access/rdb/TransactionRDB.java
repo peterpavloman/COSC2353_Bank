@@ -25,10 +25,14 @@ public class TransactionRDB implements TransactionDAO
 		try
 		{
 			PreparedStatement statement = connection.prepareStatement(
-					"INSERT INTO ACMEBANK.BANKTRANSACTION(ID_BANKTRANSACTION,"
-					+ "ID_SAVINGS, AMOUNT, DESCRIPTION) VALUES(?, ?, ?, ?)",
+					"INSERT INTO ACMEBANK.BANKTRANSACTION(ID_SAVINGS, AMOUNT, DESCRIPTION) VALUES(?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 
+			statement.setInt(1, aTransaction.getSavingID());
+			statement.setBigDecimal(2, aTransaction.getAmount());
+			statement.setString(3, aTransaction.getDescription());
+
+			
 			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 
@@ -85,7 +89,7 @@ public class TransactionRDB implements TransactionDAO
 		try
 		{
 			PreparedStatement statement = connection.prepareStatement(
-					"UPDATE ACMEBANK.BANKTRANSCATION SET ID_SAVINGS= ?, ID_CUSTOMER=?, AMOUNT= ?, DESCRIPTION= ? WHERE ID_BANKTRANSACTION= ?");
+					"UPDATE ACMEBANK.BANKTRANSCATION SET ID_SAVINGS= ?, AMOUNT= ?, DESCRIPTION= ? WHERE ID_BANKTRANSACTION= ?");
 
 			statement.setInt(1, aTransaction.getID());
 			statement.setBigDecimal(2, aTransaction.getAmount());
