@@ -2,45 +2,11 @@ COSC2353_Bank
 =============
 
 COSC2353 Electronic Commerce and Enterprise
+ACME Bank system
+Authors: nanxinglin, peter, yunfei
 
+University final year project, using J2EE framework to develop a Java software project as a team that implements simple banking systems that interact with each other. 
 
-Notes:
-DB username / password
-Username: "dbuser"
-Password: "secret"
+The first system, the savings system, representing a legacy system that uses JDBC and stateful session beans to provide the core functionality and a simple application for employees. This system was designed to 'reinvent the wheel' by not fully utilizing avaliable frameworks, representing a 'legacy' system to contrast against the second system.
 
-
-
-
-
-
-CREATE TABLE ACMEBANK.employee (
-    id_employee INT NOT null PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-    firstname varchar(100), 
-    lastname varchar(100)
-);
-	
-CREATE TABLE ACMEBANK.customer (
-    id_customer INT NOT null PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-    firstname varchar(100), 
-    lastname varchar(100),
-	dateofbirth date,
-	address varchar(128)
-);
-
-CREATE TABLE ACMEBANK.savings (
-    id_savings INT NOT null PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-	id_customer INT NOT null,
-    balance INT,
-	
-	FOREIGN KEY (id_customer) REFERENCES ACMEBANK.customer(id_customer)
-);
-
-CREATE TABLE ACMEBANK.banktransaction (
-    id_banktransaction INT NOT null PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-	id_savings INT NOT null,
-    amount INT,
-	description varchar(256),
-	
-	FOREIGN KEY (id_savings) REFERENCES ACMEBANK.savings(id_savings)
-);
+The second system, the home loan system, is a more sophisticated project that utilizes more of the frameworks avaliable for Java. It extends the core functionality, implementing the ability for customers to create home loans, implemented using the Java Persistence API rather than dealing with JBDC directly. The system interacts with the legacy' savings system using the Java Message Service and message beans, and provides both a web client for customers implementing using JavaServer Faces and a simple RESTful web service.
