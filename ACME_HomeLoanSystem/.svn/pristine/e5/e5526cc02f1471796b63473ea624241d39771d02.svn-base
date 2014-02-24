@@ -1,0 +1,210 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package jms;
+
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.Session;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import entitydata.Customer;
+import entitydata.Savings;
+import java.util.HashMap;
+import java.util.List;
+import javax.jms.ObjectMessage;
+import jms.homeloan.MessageProtocolSavings;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+public class SavingsProducerJMS implements SavingsProducerBridge
+{
+
+	private Queue mACMESavingsQueue;
+	private QueueConnectionFactory mConnectionFactory;
+	private Connection mConnection;
+	private Session mSession;
+	private MessageProducer mProducer;
+	private Queue mReplyQueue;
+	private long mCorrelationIdCounter;
+	private static final long REPLY_TIMEOUT_MS = 15000;
+
+	public SavingsProducerJMS() throws JMSException, NamingException
+	{
+		Context lJDNIContext = new InitialContext();
+
+		mConnectionFactory = (QueueConnectionFactory) lJDNIContext.lookup(
+				"jms/ACMEHomeLoanQueueConnectionFactory");
+		mACMESavingsQueue = (Queue) lJDNIContext.lookup("jms/ACMESavingsQueue");
+
+		mConnection = mConnectionFactory.createConnection();
+		mConnection.start();
+
+		// TODO: Experiment with making lSession support transactions (change to true)
+		mSession = mConnection.createSession(false,
+				Session.AUTO_ACKNOWLEDGE);
+		mProducer = mSession.createProducer(mACMESavingsQueue);
+
+		mReplyQueue = mSession.createTemporaryQueue();
+
+		mCorrelationIdCounter = 0;
+	}
+
+	@Override
+	public int withdrawFromSavingsAccount(int aIDSavingsAccount,
+			BigDecimal aAmount) throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public boolean verifyCustomerLogin(int aIDCustomer, String aPassword) throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Customer getCustomerDetails(int aIDCustomer) throws ApplicationLogicException
+	{
+		try
+		{
+			ObjectMessage lMessage = mSession.createObjectMessage(new HashMap());
+
+			lMessage = MessageProtocolSavings.GetCustomerDetails.
+					formatRequestMessage(lMessage, aIDCustomer);
+
+			ObjectMessage lResponse = sendJMSRequest(lMessage);
+
+			if (lResponse == null)
+			{
+				throw new ApplicationLogicException("No response received.");
+			}
+			else
+			{
+				Customer lCustomer = new Customer(
+						MessageProtocolSavings.GetCustomerDetails.
+						getResponseFirstName(lResponse),
+						MessageProtocolSavings.GetCustomerDetails.
+						getResponseLastName(lResponse),
+						MessageProtocolSavings.GetCustomerDetails.
+						getResponseDate(lResponse),
+						MessageProtocolSavings.GetCustomerDetails.
+						getResponseAddress(lResponse));
+				return lCustomer;
+			}
+		}
+		catch (JMSException aException)
+		{
+			Logger.getLogger(SavingsProducerJMS.class.getName()).
+					log(Level.SEVERE, null, aException);
+			throw new ApplicationLogicException(aException.getMessage());
+		}
+	}
+
+	private ObjectMessage sendJMSRequest(ObjectMessage aMessage) throws JMSException
+	{
+		long lCorrelationIdCounter = mCorrelationIdCounter;
+		mCorrelationIdCounter++;
+		String lCorrelationId = Long.toHexString(lCorrelationIdCounter);
+
+		// Create a destination for the reply
+		aMessage.setJMSReplyTo(mReplyQueue);
+		// aMessage.setJMSCorrelationID(lCorrelationId);
+
+		MessageConsumer lConsumer = mSession.createConsumer(mReplyQueue);
+		mProducer.send(aMessage);
+
+		// A synchronous solution, since asynchronous is more complex
+		// and doesn't provide us much of a benefit:
+		// - We wait for a message to be received (with REPLY_TIMEOUT_MS timeout)
+		// - Using MessageListener we only consume messages that have the correct ID
+
+		/*
+		 MessageConsumer lConsumer = mSession.createConsumer(mReplyQueue,
+		 " JMSCorrelationID = '" + lCorrelationId + "'");
+		 */
+
+		ObjectMessage lResponse = (ObjectMessage) lConsumer.receive(
+				REPLY_TIMEOUT_MS);
+		lConsumer.close();
+
+		return lResponse;
+	}
+
+	@Override
+	public Savings getSavingsDetails(int aIDSavings) throws ApplicationLogicException
+	{
+		try
+		{
+			ObjectMessage lMessage = mSession.createObjectMessage(new HashMap());
+
+			lMessage = MessageProtocolSavings.GetSavingsDetails.
+					formatRequestMessage(lMessage, aIDSavings);
+
+			ObjectMessage lResponse = sendJMSRequest(lMessage);
+
+			if (lResponse == null)
+			{
+				throw new ApplicationLogicException("No response received.");
+			}
+			else
+			{
+				Savings lSavings = new Savings(
+						MessageProtocolSavings.GetSavingsDetails.
+						getResponseIDCustomer(lResponse),
+						MessageProtocolSavings.GetSavingsDetails.
+						getResponseBalance(lResponse));
+				return lSavings;
+			}
+		}
+		catch (JMSException aException)
+		{
+			Logger.getLogger(SavingsProducerJMS.class.getName()).
+					log(Level.SEVERE, null, aException);
+			throw new ApplicationLogicException(aException.getMessage());
+		}
+	}
+
+	@Override
+	public List<Integer> getSavingsIdList(int aIDCustomer) throws ApplicationLogicException
+	{
+		try
+		{
+			ObjectMessage lMessage = mSession.createObjectMessage(new HashMap());
+
+			lMessage = MessageProtocolSavings.GetSavingsIdList.
+					formatRequestMessage(lMessage, aIDCustomer);
+
+			ObjectMessage lResponse = sendJMSRequest(lMessage);
+
+			if (lResponse == null)
+			{
+				throw new ApplicationLogicException("No response received.");
+			}
+			else
+			{
+				List<Integer> lList = MessageProtocolSavings.GetSavingsIdList.
+						getResponseSavingsIdList(lResponse);
+				return lList;
+			}
+		}
+		catch (JMSException aException)
+		{
+			Logger.getLogger(SavingsProducerJMS.class.getName()).
+					log(Level.SEVERE, null, aException);
+			throw new ApplicationLogicException(aException.getMessage());
+		}
+	}
+}

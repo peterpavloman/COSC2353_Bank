@@ -1,0 +1,43 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package beans;
+
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import javax.ejb.Stateless;
+import javax.ejb.LocalBean;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import jms.SavingsProducerBridge;
+
+/**
+ * Used to suspend a transaction when repaying a home loan. Allows us to get a
+ * response when we send a request via JMS for paying off a home loan, while
+ * having transactional support.
+ *
+ * based off:
+ * http://frankkieviet.blogspot.com.au/2006/08/jms-requestreply-from-ejb.html
+ *
+ * @author Peter (s3286430)
+ */
+@Stateless
+@LocalBean
+public class RepayHomeLoanBean
+{
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public boolean withdrawFromSavingsAccount(
+			SavingsProducerBridge aSavingsSystem, int aIDSavings,
+			BigDecimal aAmount) throws ApplicationLogicException
+	{
+		// Amount repayed must be > 0
+		if (aAmount.compareTo(BigDecimal.ZERO) <= 0)
+		{
+			throw new ApplicationLogicException("Invalid repayment amount!");
+		}
+
+		return aSavingsSystem.withdrawFromSavingsAccount(aIDSavings, aAmount);
+	}
+}

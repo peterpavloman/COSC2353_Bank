@@ -1,0 +1,45 @@
+package security;
+
+/**
+ *
+ * SavingsSystemAuth
+ * 
+ * Provides login details for the Saving system when using JMS.
+ * The Saving system requires an Employee username / password in order
+ * to perform any operations.
+ * 
+ * We have a dedicated Employee account for servicing requests made
+ * by Customers. This class is responsible for providing the authentication
+ * details for that account.
+ * 
+ * Login details is taken from a Properties file.
+ * 
+ * Singleton pattern.
+ * 
+ * @author s3286430
+ */
+public class SavingsSystemAuth
+{
+	private static SavingsSystemAuth msInstance = null;
+	protected SavingsSystemAuth() { };
+	
+	public SavingsSystemAuth getInstance()
+	{
+		if (msInstance == null)
+		{
+			msInstance = new SavingsSystemAuth();
+		}
+		
+		return msInstance;
+	}
+	
+	public static String getUsername()
+	{
+		return "Hello";
+	}
+	
+	public static String getPassword()
+	{
+		return "World";
+	}
+}

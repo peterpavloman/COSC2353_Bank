@@ -1,0 +1,22 @@
+package jms.data;
+
+/**
+ *
+ * Hacky, but we'll see how it turns out.
+ * 
+ * @author Peter (s3286430)
+ */
+public class Customer
+{
+	private String mFirstName;
+	private String mLastName;
+	
+	public Customer(String aFirstName, String aLastName)
+	{
+		mFirstName = aFirstName;
+		mLastName = aLastName;
+	}
+	
+	public String getFirstName() { return mFirstName; }
+	public String getLastName() { return mLastName; }
+}

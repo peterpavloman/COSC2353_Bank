@@ -1,0 +1,166 @@
+package beans;
+
+import data.jpa.HomeLoan;
+import exceptions.ApplicationLogicException;
+import exceptions.LoginFailureException;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.jms.JMSException;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
+import jms.SavingsProducerBridge;
+import jms.SavingsProducerJMS;
+import jms.data.Customer;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class HomeLoanClient implements HomeLoanClientRemote
+{
+
+	private boolean mLoggedIn;
+	private int mCustomerId;
+	private SavingsProducerBridge mSavingsSystem;
+	@Resource
+	private UserTransaction mTransaction;
+	
+	@PersistenceContext(unitName="ACME_HomeLoanSystem-ejbPU")
+	private EntityManager mEntManager;
+
+	@PostConstruct
+	public void postConstruct()
+	{
+		mLoggedIn = false;
+		mCustomerId = 0;
+		mSavingsSystem = null;
+		postActivate();
+	}
+
+	@PostActivate
+	public void postActivate()
+	{
+		if (mSavingsSystem == null)
+		{
+			try
+			{
+				mSavingsSystem = new SavingsProducerJMS();
+			}
+			catch (JMSException ex)
+			{
+				Logger.getLogger(HomeLoanClient.class.getName()).
+						log(Level.SEVERE, null, ex);
+			}
+			catch (NamingException ex)
+			{
+				Logger.getLogger(HomeLoanClient.class.getName()).
+						log(Level.SEVERE, null, ex);
+			}
+		}
+	}
+
+	@PrePassivate
+	@PreDestroy
+	public void close()
+	{
+		// We should somehow close the JMS connection in SavingsProducer?
+	}
+
+	@Override
+	public boolean getIsLoggedIn()
+	{
+		return mLoggedIn;
+	}
+
+	@Override
+	public String getCustomerFullName(int aIDCustomer) throws ApplicationLogicException,
+			LoginFailureException
+	{
+		Customer lCustomer = mSavingsSystem.getCustomerDetails(aIDCustomer);
+
+		return lCustomer.getFirstName() + " " + lCustomer.getLastName();
+	}
+
+	@Override
+	public int createHomeLoanAccount(int aSavingsId, BigDecimal aAmountBorrowed,
+			String aCurrentJob, String aSalaryYear, String aContact,
+			int aContactType)
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Check requirements for HomeLoan first
+		
+		// Amount borrowed must be > 0
+		
+		// Savings account must exist and must have at least 3 deposits made into it
+		
+		try
+		{
+			// Transaction start
+			mTransaction.begin();
+			
+			HomeLoan lHomeLoan = new HomeLoan();
+			lHomeLoan.setAmountBorrowed(aAmountBorrowed);
+			
+			mEntManager.persist(lHomeLoan);
+			
+			mTransaction.commit();
+			return 42;
+		}
+		catch (Exception aException)
+		{
+			Logger.getLogger(HomeLoanClient.class.getName()).
+					log(Level.SEVERE, null, aException);
+			try
+			{
+				mTransaction.rollback();
+			}
+			catch (Exception aException2)
+			{
+				Logger.getLogger(HomeLoanClient.class.getName()).
+					log(Level.SEVERE, null, aException2);
+			}
+		}
+
+		return 0;
+	}
+
+	@Override
+	public void repayHomeLoanAccount(int aHomeLoanId, int aSavingsId,
+			int aAmount)
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS
+		// Must have transaction support
+		// Must be atomic
+	}
+
+	@Override
+	public List<String> getSavingsAccounts()
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS
+		return null;
+	}
+
+	@Override
+	public List<String> getHomeLoanAccounts()
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS? Not sure
+		return null;
+	}
+}

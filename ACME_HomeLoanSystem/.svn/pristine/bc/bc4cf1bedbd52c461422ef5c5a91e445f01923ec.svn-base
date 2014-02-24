@@ -1,0 +1,17 @@
+package data.access;
+
+import data.jpa.HomeLoan;
+import exceptions.ApplicationLogicException;
+
+/**
+ * Data Access Object interface for Customers.
+ * 
+ * @author s3286430
+ */
+public interface HomeLoanDAO 
+{
+    public void create(HomeLoan aHomeLoan) throws ApplicationLogicException;
+    public HomeLoan get(int aIDHomeLoan) throws ApplicationLogicException;
+    public void update(HomeLoan aHomeLoan) throws ApplicationLogicException;
+    public void delete(HomeLoan aHomeLoan) throws ApplicationLogicException;
+}

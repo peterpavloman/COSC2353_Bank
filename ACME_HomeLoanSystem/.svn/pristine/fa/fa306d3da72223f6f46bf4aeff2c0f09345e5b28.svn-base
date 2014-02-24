@@ -1,0 +1,62 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.enterprise.context.ApplicationScoped;
+import javax.faces.bean.ManagedProperty;
+import javax.inject.Named;
+
+@Named(value="userAction")
+@ApplicationScoped
+public class UserAction{
+	@EJB
+	private HomeLoanBeanRemote homeLoanUser;
+
+	@ManagedProperty(value="#{user}")
+	private UserSession	user;
+
+	private int		userId;
+	private String	password;
+
+	private SavingsClientBeanRemote savingsUser;
+
+	public UserAction(){}
+
+	public void login(){
+		try{
+			if(homeLoanUser.authenticateLogin(userId, password)){
+				try{
+					entitydata.Customer user= homeLoanUser.getCustomerDetails(userId);
+					Constant.getSession().setAttribute("User", user);
+				}catch(ApplicationLogicException ex){ ex.printStackTrace(); }
+			}else
+				Constant.addMessage(null, "Invalid user or password.");
+		}catch(ApplicationLogicException ex){
+			Constant.addMessage(null, "Internal server error ocurred.");
+		}
+	}
+
+	public void logout(){
+		Constant.removeSessionAttribute("User");
+		Constant.redirect("login.xhtml");
+	}
+
+	public boolean isLoggedIn(){
+		boolean isLoggedIn= Constant.getSessionAttribute("User")!= null;
+		String	uri= Constant.getRequest().getPathInfo();
+		System.out.println(isLoggedIn);
+		if(!isLoggedIn && uri.contains("details.xhtml")){
+			Constant.redirect("login.xhtml");
+		}else if(isLoggedIn && uri.contains("login.xhtml"))
+			Constant.redirect("details.xhtml");
+
+		return isLoggedIn;
+	}
+
+	public int getUserId(){ return userId; }
+	public void setUserId(int userId){ this.userId = userId; }
+	public String getPassword(){ return password; }
+	public void setPassword(String password){ this.password = password; }
+}

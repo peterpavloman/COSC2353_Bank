@@ -1,0 +1,40 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package beans;
+
+import exceptions.ApplicationLogicException;
+import exceptions.LoginFailureException;
+import java.math.BigDecimal;
+import java.util.List;
+import javax.ejb.Remote;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Remote
+public interface HomeLoanClientRemote
+{
+
+	public boolean getIsLoggedIn();
+
+	public String getCustomerFullName(int aIDCustomer) throws ApplicationLogicException,
+			LoginFailureException;
+
+	public int createHomeLoanAccount(int aSavingsId, BigDecimal aAmountBorrowed,
+			String aCurrentJob, String aSalaryPerYear, String aPreferredContact,
+			int aPreferredContactType)
+			throws ApplicationLogicException, LoginFailureException;
+
+	public void repayHomeLoanAccount(int aHomeLoanId, int aSavingsId,
+			int aAmount)
+			throws ApplicationLogicException, LoginFailureException;
+
+	public List<String> getSavingsAccounts()
+			throws ApplicationLogicException, LoginFailureException;
+
+	public List<String> getHomeLoanAccounts()
+			throws ApplicationLogicException, LoginFailureException;
+}

@@ -1,11 +1,11 @@
 package data.access.rdb;
 
 /**
- *
- * @author nanxinglin
+ * Relational database implementation of Transaction data access object.
+ * @author nanxinglin, Peter
  */
+import data.Transaction;
 import java.sql.*;
-import data.*;
 import data.access.*;
 import exceptions.ApplicationLogicException;
 

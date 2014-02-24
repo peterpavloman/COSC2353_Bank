@@ -1,0 +1,30 @@
+package beans;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.faces.bean.ManagedProperty;
+import javax.inject.Named;
+
+@Named(value="userAction")
+@ApplicationScoped
+public class UserAction{
+	private String userId;
+	private String password;
+
+	@ManagedProperty(value="#{user}")
+	private User user;
+	private SavingsClientBeanRemote savingsUser;
+
+	public UserAction(){}
+
+	public void login(){
+
+	}
+	public boolean isLoggin(){
+		return false;
+	}
+
+	public String getUserId(){ return userId; }
+	public void setUserId(String userId){ this.userId = userId; }
+	public String getPassword(){ return password; }
+	public void setPassword(String password){ this.password = password; }
+}

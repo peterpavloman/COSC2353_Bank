@@ -1,0 +1,152 @@
+package jpa.entity;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Entity
+public class HomeLoan implements Serializable
+{
+	private static final long serialVersionUID = 1L;
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	
+	private int mCustomerId;
+	private String mCurrentJob;
+	private String mSalaryYear;
+	private String mContactPhone;
+	private String mContactEmail;
+	private int mContactType;
+	private BigDecimal mAmountBorrowed;
+	private BigDecimal mAmountRepayed;
+	
+	public int getCustomerId()
+	{
+		return mCustomerId;
+	}
+	
+	public void setCustomerId(int aCustomerId)
+	{
+		mCustomerId = aCustomerId;
+	}
+	
+	public String getCurrentJob()
+	{
+		return mCurrentJob;
+	}
+
+	public void setCurrentJob(String aCurrentJob)
+	{
+		this.mCurrentJob = aCurrentJob;
+	}
+
+	public String getSalaryYear()
+	{
+		return mSalaryYear;
+	}
+
+	public void setSalaryYear(String aSalaryYear)
+	{
+		this.mSalaryYear = aSalaryYear;
+	}
+
+	public String getContactPhone()
+	{
+		return mContactPhone;
+	}
+	
+	public String getContactEmail()
+	{
+		return mContactEmail;
+	}
+
+	public void setContactPhone(String aContactPhone)
+	{
+		this.mContactPhone = aContactPhone;
+	}
+	
+	public void setContactEmail(String aContactEmail)
+	{
+		this.mContactEmail = aContactEmail;
+	}
+
+	public int getContactType()
+	{
+		return mContactType;
+	}
+
+	public void setContactType(int aContactType)
+	{
+		this.mContactType = aContactType;
+	}
+
+	public BigDecimal getAmountBorrowed()
+	{
+		return mAmountBorrowed;
+	}
+
+	public void setAmountBorrowed(BigDecimal aAmountBorrowed)
+	{
+		this.mAmountBorrowed = aAmountBorrowed;
+	}
+
+	public BigDecimal getAmountRepayed()
+	{
+		return mAmountRepayed;
+	}
+
+	public void setAmountRepayed(BigDecimal aAmountRepayed)
+	{
+		this.mAmountRepayed = aAmountRepayed;
+	}
+
+	
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (id != null ? id.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof HomeLoan))
+		{
+			return false;
+		}
+		HomeLoan other = (HomeLoan) object;
+		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "jpa.HomeLoan[ id=" + id + " ]";
+	}
+	
+}

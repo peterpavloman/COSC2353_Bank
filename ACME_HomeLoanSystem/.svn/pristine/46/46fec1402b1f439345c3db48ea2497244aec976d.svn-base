@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://xmlns.jcp.org/jsf/html"
+				xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://xmlns.jcp.org/jsf/core">
+	<p:tab title="Employment">
+		<p:panel>
+			<h:panelGrid columns="3" columnClasses="text-bold pad-right,,">
+				<h:outputLabel for="company" value="Company/Workplace"/>
+				<p:inputText id="company" label="Company/Workplace"/>
+				<p:message for="company"/>
+
+				<h:outputLabel for="job" value="Current Job"/>
+				<p:inputText id="job" label="Current Job" validatorMessage="Cannot contained any other than alphabets &amp; space.">
+					<f:validateRegex pattern="[a-zA-Z\ ]+"/>
+				</p:inputText>
+				<p:message for="job"/>
+
+<!--				<h:outputLabel for="salary" value="Yearly Salary($)"/>
+				<p:inputText id="salary" label="Salary"  required="false"
+							 requiredMessage="Yearly salary is required." validatorMessage="Invalid salary input.">
+					<f:validateDoubleRange minimum="0"/>
+				</p:inputText>
+				<p:message for="salary"/>-->
+
+			</h:panelGrid>
+		</p:panel>
+	</p:tab>
+</ui:composition>
+

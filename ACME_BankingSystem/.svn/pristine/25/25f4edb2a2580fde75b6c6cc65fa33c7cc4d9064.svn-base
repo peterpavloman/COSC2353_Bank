@@ -1,0 +1,10 @@
+package jms;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+public class HomeLoanMessageHandler
+{
+	
+}

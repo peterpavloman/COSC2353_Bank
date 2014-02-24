@@ -1,0 +1,11 @@
+package beans;
+
+import java.io.Serializable;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
+@Named(value="user")
+@SessionScoped
+public class User implements Serializable{
+	public User(){}
+}

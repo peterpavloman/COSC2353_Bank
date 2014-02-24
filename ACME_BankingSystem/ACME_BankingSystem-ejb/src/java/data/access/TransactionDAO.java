@@ -5,7 +5,7 @@ import exceptions.ApplicationLogicException;
 
 /**
  *
- * @author narks
+ * @author Peter
  */
 public interface TransactionDAO
 {

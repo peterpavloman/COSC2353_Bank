@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core">
+<p:tab title="Agreement">
+		<p:panel header="Home Loan Agreement">
+			<h:panelGrid columns="3" columnClasses="text-bold pad-right span-m,,">
+				<h:outputLabel for="borrowAmount" value="Borrow Amount($)"/>
+				<p:inputText id="borrowAmount" label="Borrowed Amount" value="#{userSession.tempHomeLoan.borrowed}" validatorMessage="The amount must be in range of 1 to 1000000">
+					<f:validateDoubleRange minimum="1" maximum="1000000"/>
+				</p:inputText>
+				<p:message for="borrowedAmount"/>
+
+				<h:panelGroup/>
+				<h:inputTextarea readonly="true" cols="30">
+					The minimum borrowed amount: $1<br/>
+					The maximum borrowed amount: $1,000,000<br/>
+					<br/>
+					You must have a savings account.<br/>
+					You must prove that you can make regular deposits<br/>
+					You must have 3 or more deposits initially in your savings account<br/>
+					<br/>
+					<b>You must agree of these conditions above.</b>
+				</h:inputTextarea>
+				<h:panelGroup/>
+
+				<h:panelGroup/>
+				<h:selectOneRadio id="isAgree" value="#{userSession.agree}" required="true" requiredMessage="You must select one of these.">
+					<f:selectItem itemLabel="Agree" itemValue="true"/>
+					<f:selectItem itemLabel="Disagreee" itemValue="false"/>
+				</h:selectOneRadio>
+
+				<h:panelGroup/>
+				<p:commandButton actionListener="#{userSession.createHomeLoan()}" value="Submit" ajax="false" id="submit"/>
+				<p:message for="submit"/>
+			</h:panelGrid>
+		</p:panel>
+	</p:tab>
+</html>

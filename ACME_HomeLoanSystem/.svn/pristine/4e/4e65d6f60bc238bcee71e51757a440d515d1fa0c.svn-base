@@ -1,0 +1,66 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import javax.inject.Named;
+import java.io.Serializable;
+import javax.ejb.EJB;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.enterprise.context.ApplicationScoped;
+
+@Named(value = "testBean")
+@ApplicationScoped
+public class TestBean implements Serializable
+{
+
+	@EJB
+	private HomeLoanClientRemote mClient;
+	
+	private String text;
+
+	public TestBean()
+	{
+	}
+
+	public String getText()
+	{
+		return text;
+	}
+
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+
+	public String getHello(String aTest)
+	{
+		// return "hello world " + aTest;
+		try
+		{
+			return mClient.getCustomerFullName(2);
+		}
+		catch (Exception e)
+		{
+			System.out.println("OH NOES!");
+			e.printStackTrace();
+			return "Exception thrown: " + e.getLocalizedMessage();
+		}
+		
+	}
+	
+	public String getTestString()
+	{
+		try
+		{
+			return mClient.getCustomerFullName(2);
+		}
+		catch (ApplicationLogicException e)
+		{
+			return "Exception thrown: " + e.getUserMessage();
+		}
+		catch (Exception e)
+		{
+			return "Exception thrown: " + e.getMessage();
+		}
+	}
+}

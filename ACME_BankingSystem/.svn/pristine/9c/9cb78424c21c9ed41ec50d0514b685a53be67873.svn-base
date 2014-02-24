@@ -1,0 +1,263 @@
+package beans;
+
+import data.Customer;
+import data.Employee;
+import data.Savings;
+import data.Transaction;
+import data.access.CustomerDAO;
+import data.access.EmployeeDAO;
+import data.access.SavingsDAO;
+import data.access.TransactionDAO;
+import data.access.rdb.RDBCustomerDAO;
+import data.access.rdb.RDBEmployeeDAO;
+import data.access.rdb.RDBSavingsDAO;
+import data.access.rdb.RDBTransactionDAO;
+import exceptions.ApplicationLogicException;
+import exceptions.LoginFailureException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Stateful;
+import javax.sql.DataSource;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Stateful
+public class SavingsClientBean implements SavingsClientBeanRemote
+{
+
+	// private static final long LOGIN_SESSION_PERIOD_MS = 60000;
+	private static final long LOGIN_SESSION_PERIOD_MS = 600000;
+	private static final int MAX_OPERATIONS_PER_SESSION = 10;
+	private static final int MAX_SAVINGS_ACCOUNTS_PER_CUSTOMER = 2;
+	@Resource(lookup = "jdbc/ACMEDBDatasource")
+	private DataSource mDataSource;
+	private Connection mDBConnection;
+	private boolean mLoggedIn;
+	private int mOperationCount;
+	private long mLoginTime;
+
+	@PostConstruct
+	public void postConstruct()
+	{
+		mLoggedIn = false;
+		mOperationCount = 0;
+		mLoginTime = new java.util.Date().getTime();
+		postActivate();
+	}
+
+	@PostActivate
+	public void postActivate()
+	{
+		try
+		{
+			mDBConnection = mDataSource.getConnection();
+		}
+		catch (SQLException aException)
+		{
+			aException.printStackTrace();
+		}
+	}
+
+	@PrePassivate
+	@PreDestroy
+	public void close()
+	{
+		try
+		{
+			mDBConnection.close();
+		}
+		catch (SQLException aException)
+		{
+			aException.printStackTrace();
+		}
+	}
+
+	private boolean checkLoginExpired()
+	{
+		if (mLoggedIn == false
+				|| mLoginTime + LOGIN_SESSION_PERIOD_MS <= new java.util.Date().
+				getTime()
+				|| mOperationCount >= MAX_OPERATIONS_PER_SESSION)
+		{
+			mLoggedIn = false;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean login(int aIDEmployee, String aPassword)
+	{
+		mLoggedIn = false;
+		mOperationCount = 0;
+		mLoginTime = new java.util.Date().getTime();
+		try
+		{
+			EmployeeDAO lDAO = new RDBEmployeeDAO(mDBConnection);
+			Employee lEmployee = lDAO.get(aIDEmployee);
+
+			if (lEmployee.getPassword().equals(aPassword))
+			{
+				mLoggedIn = true;
+				return true;
+			}
+		}
+		catch (Exception aException)
+		{
+			System.out.println("Could not check employee details.");
+		}
+		return false;
+	}
+
+	@Override
+	public int getOperationCount()
+	{
+		return mOperationCount;
+	}
+
+	@Override
+	public int getOperationCountLimit()
+	{
+		return MAX_OPERATIONS_PER_SESSION;
+	}
+
+	@Override
+	public boolean getIsLoggedIn()
+	{
+		checkLoginExpired();
+		return mLoggedIn;
+	}
+
+	@Override
+	public int createCustomer(String aFirstName, String aLastName,
+			Date aDateOfBirth, String aAddress, String aPassword) throws LoginFailureException, ApplicationLogicException
+	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
+		mOperationCount++;
+
+		CustomerDAO lDAO = new RDBCustomerDAO(mDBConnection);
+		Customer lNewCustomer = new Customer(aFirstName, aLastName, aDateOfBirth,
+				aAddress, aPassword);
+		lDAO.create(lNewCustomer);
+
+		int lCustomerId = lNewCustomer.getIDCustomer();
+		return lCustomerId;
+	}
+
+	@Override
+	public int createSavingsAccount(int aIDCustomer) throws LoginFailureException, ApplicationLogicException
+	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
+		mOperationCount++;
+
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
+
+		// Enforce maximum of 2 savings account per customer
+		int lAccountCount = lSavingsDAO.getSavingsAccountCount(aIDCustomer);
+		if (lAccountCount >= MAX_SAVINGS_ACCOUNTS_PER_CUSTOMER)
+		{
+			throw new ApplicationLogicException(
+					"Customer has reached limit of 2 saving accounts!");
+		}
+
+		Savings lNewAccount = new Savings(aIDCustomer, new BigDecimal("0.0"));
+		lSavingsDAO.create(lNewAccount);
+
+		int lID = lNewAccount.getIDSavings();
+		return lID;
+	}
+
+	@Override
+	public void depositIntoSavingsAccount(int aIDSavings, BigDecimal aAmount) throws LoginFailureException, ApplicationLogicException
+	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
+		mOperationCount++;
+
+		if (aAmount.compareTo(BigDecimal.ZERO) <= 0)
+		{
+			throw new ApplicationLogicException("Invalid deposit amount!");
+		}
+
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
+		TransactionDAO lTransactionDAO = new RDBTransactionDAO(mDBConnection);
+
+		Savings lSavings = lSavingsDAO.get(aIDSavings);
+		lSavings.setBalance(lSavings.getBalance().add(aAmount));
+
+		Transaction lTransaction = new Transaction(aIDSavings, aAmount,
+				"Deposit into savings account");
+
+		// Record transaction, then do update
+		lTransactionDAO.create(lTransaction);
+		lSavingsDAO.update(lSavings);
+	}
+
+	@Override
+	public void withdrawIntoSavingsAccount(int aIDSavings, BigDecimal aAmount) throws LoginFailureException, ApplicationLogicException
+	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
+		mOperationCount++;
+
+		if (aAmount.compareTo(BigDecimal.ZERO) <= 0)
+		{
+			throw new ApplicationLogicException("Invalid withdraw amount!");
+		}
+
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
+		TransactionDAO lTransactionDAO = new RDBTransactionDAO(mDBConnection);
+
+		Savings lSavings = lSavingsDAO.get(aIDSavings);
+		BigDecimal lNewBalance = lSavings.getBalance().subtract(aAmount);
+		if (lNewBalance.compareTo(BigDecimal.ZERO) < 0)
+		{
+			throw new ApplicationLogicException(
+					"Account does not have sufficient funds!");
+		}
+
+		lSavings.setBalance(lNewBalance);
+
+		// We store a negative amount to represent a withdrawal
+		aAmount = BigDecimal.ZERO.subtract(aAmount);
+		Transaction lTransaction = new Transaction(aIDSavings, aAmount,
+				"Withdraw from savings account");
+
+		// Record transaction, then do update
+		lTransactionDAO.create(lTransaction);
+		lSavingsDAO.update(lSavings);
+	}
+
+	@Override
+	public BigDecimal getSavingsAccountBalance(int aIDSavings) throws LoginFailureException, ApplicationLogicException
+	{
+		if (checkLoginExpired())
+		{
+			throw new LoginFailureException();
+		}
+		mOperationCount++;
+
+		SavingsDAO lSavingsDAO = new RDBSavingsDAO(mDBConnection);
+		Savings lSavings = lSavingsDAO.get(aIDSavings);
+		return lSavings.getBalance();
+	}
+}

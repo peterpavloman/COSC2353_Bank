@@ -1,0 +1,38 @@
+package beans;
+
+import entitydata.HomeLoan;
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import java.util.List;
+import javax.ejb.Stateless;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Stateless
+public class ThirdPartyInvestorBean implements ThirdPartyInvestorBeanRemote
+{
+
+	@Override
+	public List<Long> getHomeLoanIdList() throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public HomeLoan getHomeLoanDetails(Long aHomeLoanId) throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public BigDecimal getTotalSavingsBalance() throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	// Add business logic below. (Right-click in editor and choose
+	// "Insert Code > Add Business Method")
+
+}

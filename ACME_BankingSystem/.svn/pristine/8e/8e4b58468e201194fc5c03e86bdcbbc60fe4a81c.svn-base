@@ -1,0 +1,63 @@
+package entitydata;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+/**
+ *
+ * Data object for representing HomeLoan data.
+ * Hacky, but we'll see how it turns out.
+ * 
+ * @author Peter (s3286430)
+ */
+public class HomeLoan implements Serializable
+{
+	private int mCustomerId;
+	private String mCurrentJob;
+	private String mSalaryYear;
+	private String mContact;
+	private int mContactType;
+	private BigDecimal mAmountBorrowed;
+	private BigDecimal mAmountRepayed;
+	
+	public HomeLoan(int aCustomerId, String aCurrentJob, String aSalaryYear, String aContact,
+			int aContactType, BigDecimal aAmountBorrowed, BigDecimal aAmountRepayed)
+	{
+		mCustomerId = aCustomerId;
+		mCurrentJob = aCurrentJob;
+		mSalaryYear = aSalaryYear;
+		mContact = aContact;
+		mContactType = aContactType;
+		mAmountBorrowed = aAmountBorrowed;
+		mAmountRepayed = aAmountRepayed;
+	}
+	
+	public String getCurrentJob()
+	{
+		return mCurrentJob;
+	}
+
+	public String getSalaryYear()
+	{
+		return mSalaryYear;
+	}
+	public String getContact()
+	{
+		return mContact;
+	}
+
+	public int getContactType()
+	{
+		return mContactType;
+	}
+
+	public BigDecimal getAmountBorrowed()
+	{
+		return mAmountBorrowed;
+	}
+
+	public BigDecimal getAmountRepayed()
+	{
+		return mAmountRepayed;
+	}
+}

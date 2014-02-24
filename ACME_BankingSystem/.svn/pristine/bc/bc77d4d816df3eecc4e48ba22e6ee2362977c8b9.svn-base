@@ -1,0 +1,93 @@
+package jms;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.JMSConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.Session;
+
+/**
+ * Receives messages from the HomeLoan system and hands them off a
+ * MessageHandler for business logic.
+ * 
+ * @author Peter (s3286430)
+ */
+@MessageDriven(activationConfig =
+{
+	@ActivationConfigProperty(propertyName = "destinationType",
+			propertyValue = "javax.jms.Queue"),
+	@ActivationConfigProperty(propertyName = "destinationLookup",
+			propertyValue = "jms/ACMESavingsQueue")
+})
+public class HomeLoanMDB implements MessageListener
+{
+	@JMSConnectionFactory("jms/ACMESavingsQueueConnectionFactory")
+	private QueueConnectionFactory mConnectionFactory;
+	
+	public HomeLoanMDB()
+	{
+		
+		
+	}
+	
+	private Message getResponseMessage(Message aReceivedMessage, Session aSession) throws JMSException
+	{
+		String lMethodType = aReceivedMessage.getStringProperty("methodType");
+		
+		if (lMethodType.equals("getCustomerFullName"))
+		{
+			// Call to HomeLoanMessageHandler ?
+			// I think we need some sort of "register" functionality
+			int lIDCustomer = aReceivedMessage.getIntProperty("IDCustomer");
+			Message lResponse = aSession.createMapMessage();
+			
+			lResponse.setStringProperty("firstName", "John Stalvern");
+			
+			return lResponse;
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public void onMessage(Message aMessage)
+	{
+		try
+		{
+			Destination aDestination = aMessage.getJMSReplyTo();
+			
+			if (aDestination != null)
+			{
+				Connection lConnection = mConnectionFactory.createConnection();
+				Session lSession 
+						= lConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+				
+				Message lResponseMsg = getResponseMessage(aMessage, lSession);
+				
+				if (lResponseMsg != null)
+				{
+					MessageProducer lProducer = lSession.createProducer(aDestination);
+					lProducer.send(lResponseMsg);
+					lProducer.close();
+				}
+				
+				lSession.close();
+				lConnection.close();
+			}
+		}
+		catch (JMSException ex)
+		{
+			Logger.getLogger(HomeLoanMDB.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+		
+	}
+}

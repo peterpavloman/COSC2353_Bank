@@ -1,0 +1,74 @@
+package jms.homeloan;
+
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+
+/**
+ * Format and parses JMS messages sent between the HomeLoan system and the
+ * Savings system.
+ *
+ * @author Peter (s3286430)
+ */
+
+public class MessageProtocolSavings
+{
+	public static class GetCustomerDetails
+	{
+
+		public static MapMessage formatRequestMessage(MapMessage aMessage,
+				int aIDCustomer) throws JMSException
+		{
+			aMessage.setStringProperty("MethodType", "GetCustomerDetails");
+			aMessage.setIntProperty("IDCustomer", aIDCustomer);
+			
+			return aMessage;
+		}
+		
+		public static MapMessage formatResponseMessage(MapMessage aMessage,
+				String aFirstName, String aLastName)
+				throws JMSException
+		{
+			aMessage.setStringProperty("MethodType", "GetCustomerDetails");
+			
+			aMessage.setStringProperty("FirstName", aFirstName);
+			aMessage.setStringProperty("LastName", aLastName);
+			
+			return aMessage;
+		}
+		
+		public static String getRequestIDCustomer(MapMessage aMessage)
+				throws JMSException
+		{
+			return aMessage.getStringProperty("IDCustomer");
+		}
+		
+		public static String getResponseFirstName(MapMessage aMessage)
+				throws JMSException
+		{
+			return aMessage.getStringProperty("FirstName");
+		}
+		
+		public static String getResponseLastName(MapMessage aMessage)
+				throws JMSException
+		{
+			return aMessage.getStringProperty("LastName");
+		}
+	}
+	
+	public static Class getMessageType(MapMessage aMessage) throws JMSException
+	{
+		String mMethodType = aMessage.getStringProperty("MethodType");
+		
+		switch (mMethodType)
+		{
+			case "GetCustomerDetails":
+				return GetCustomerDetails.class;
+		}
+		// Not exactly the right exception to throw here, but...
+		throw new JMSException("Invalid message type!");
+	}
+}

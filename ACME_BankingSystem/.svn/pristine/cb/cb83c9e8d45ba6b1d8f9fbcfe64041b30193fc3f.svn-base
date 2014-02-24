@@ -1,0 +1,87 @@
+package jms;
+
+import data.Customer;
+import data.access.CustomerDAO;
+import data.access.rdb.RDBCustomerDAO;
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.jms.MapMessage;
+import javax.sql.DataSource;
+import jms.homeloan.MessageProtocolSavings;
+
+/**
+ *
+ * Business logic.
+ *
+ * @author Peter (s3286430)
+ */
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class HomeLoanMessageHandler
+{
+
+	@Resource(lookup = "jdbc/ACMEDBDatasource")
+	private DataSource mDataSource;
+	private Connection mDBConnection;
+
+	@PostConstruct
+	@PostActivate
+	public void postActivate()
+	{
+		try
+		{
+			mDBConnection = mDataSource.getConnection();
+		}
+		catch (SQLException aException)
+		{
+			aException.printStackTrace();
+		}
+	}
+
+	@PrePassivate
+	@PreDestroy
+	public void close()
+	{
+		try
+		{
+			mDBConnection.close();
+		}
+		catch (SQLException aException)
+		{
+			aException.printStackTrace();
+		}
+	}
+
+	public MapMessage getCustomerDetails(MapMessage aRequest,
+			MapMessage aResponse)
+	{		
+		try
+		{
+			CustomerDAO lCustomerDAO = new RDBCustomerDAO(mDBConnection);
+			
+			int lIDCustomer = MessageProtocolSavings.GetCustomerDetails.
+					getRequestIDCustomer(aRequest);
+			
+			Customer lCustomer = lCustomerDAO.get(lIDCustomer);
+			
+			aResponse = MessageProtocolSavings.GetCustomerDetails.
+					formatResponseMessage(
+					aResponse, lCustomer.getFirstName(),
+					lCustomer.getLastName());
+			
+			return aResponse;
+		}
+		catch (Exception aException)
+		{
+			return null;
+		}
+	}
+}

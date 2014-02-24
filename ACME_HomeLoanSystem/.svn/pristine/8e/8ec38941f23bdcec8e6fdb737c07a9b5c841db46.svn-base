@@ -1,0 +1,124 @@
+package data.access.jpa;
+
+import data.access.HomeLoanDAO;
+import data.jpa.HomeLoan;
+import exceptions.ApplicationLogicException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ * Relational database implementation of Customer DAO.
+ *
+ * @author s3286430
+ */
+
+/*
+public class JPAHomeLoanDAO implements HomeLoanDAO
+{
+
+	private Connection mDBConnection;
+
+	public JPAHomeLoanDAO(Connection aDBConnection)
+	{
+		mDBConnection = aDBConnection;
+	}
+
+	@Override
+	public void create(HomeLoan aHomeLoan) throws ApplicationLogicException
+	{
+		
+	}
+
+	@Override
+	public Customer get(int aIDCustomer) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement statement = mDBConnection.prepareStatement(
+					"SELECT firstname, lastname, dateofbirth, address FROM "
+					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?;");
+
+			statement.setInt(1, aIDCustomer);
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				Customer lCustomer = new Customer(result.getString(1), result.getString(2),
+						result.getDate(3), result.getString(4));
+				lCustomer.setIDCustomer(aIDCustomer);
+				
+				return lCustomer;
+			}
+			else
+			{
+				throw new ApplicationLogicException(
+						"ERROR: Invalid customer ID.");
+			}
+		}
+		catch (SQLException aException)
+		{
+			aException.printStackTrace();
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL Exception thrown.");
+		}
+	}
+
+	@Override
+	public void update(Customer aCustomer) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
+					"UPDATE ACMEBANK.CUSTOMER SET firstname=?, lastname=?, "
+					+ "dateofbirth=?, address=? WHERE id_customer=?;");
+
+			lStatement.setString(1, aCustomer.getFirstName());
+			lStatement.setString(2, aCustomer.getLastName());
+			lStatement.setDate(3, aCustomer.getDateOfBirth());
+			lStatement.setString(4, aCustomer.getAddress());
+
+			lStatement.setInt(5, aCustomer.getIDCustomer());
+
+			int lRowsAffected = lStatement.executeUpdate();
+			lStatement.close();
+			if (lRowsAffected != 1)
+			{
+				throw new ApplicationLogicException("Could not update customer.");
+			}
+		}
+		catch (SQLException aException)
+		{
+			aException.printStackTrace();
+			System.out.println("ERROR: Could not update customer.");
+			throw new ApplicationLogicException("Could not update customer.");
+		}
+	}
+
+	@Override
+	public void delete(Customer aCustomer) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
+					"DELETE FROM ACMEBANK.CUSTOMER WHERE id_customer=?");
+			lStatement.setInt(1, aCustomer.getIDCustomer());
+
+			int lRowsAffected = lStatement.executeUpdate();
+			lStatement.close();
+			if (lRowsAffected != 1)
+			{
+				throw new ApplicationLogicException("Could not delete customer.");
+			}
+		}
+		catch (SQLException aException)
+		{
+			aException.printStackTrace();
+			System.out.println("ERROR: Could not delete customer.");
+			throw new ApplicationLogicException("Could not delete customer.");
+		}
+	}
+}
+*/

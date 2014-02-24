@@ -1,0 +1,43 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package beans;
+
+import exceptions.ApplicationLogicException;
+import exceptions.LoginFailureException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Remote;
+import javax.jms.JMSException;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Remote
+public interface HomeLoanClientRemote
+{
+	public boolean getIsLoggedIn();
+
+	public String getCustomerFullName(int aIDCustomer) throws ApplicationLogicException,
+			LoginFailureException;
+
+	public int createHomeLoanAccount(int aSavingsId, int aAmountBorrowed)
+			throws ApplicationLogicException, LoginFailureException;
+	
+	public void repayHomeLoanAccount(int aHomeLoanId, int aSavingsId,
+			int aAmount)
+			throws ApplicationLogicException, LoginFailureException;
+
+	public List<String> getSavingsAccounts()
+			throws ApplicationLogicException, LoginFailureException;
+
+	public List<String> getHomeLoanAccounts()
+			throws ApplicationLogicException, LoginFailureException;
+}

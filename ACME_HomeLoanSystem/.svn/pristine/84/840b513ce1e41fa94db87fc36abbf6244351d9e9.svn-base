@@ -1,0 +1,212 @@
+package beans;
+
+import jpa.entity.HomeLoan;
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.jms.JMSException;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
+import jms.SavingsProducerBridge;
+import jms.SavingsProducerJMS;
+import entitydata.Customer;
+import entitydata.Savings;
+import java.util.ArrayList;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class HomeLoanBean implements HomeLoanBeanRemote
+{
+
+	private SavingsProducerBridge mSavingsSystem;
+	@Resource
+	private UserTransaction mTransaction;
+	@PersistenceContext(unitName = "ACME_HomeLoanSystem-ejbPU")
+	private EntityManager mEntManager;
+
+	@PostConstruct
+	public void postConstruct()
+	{
+		mSavingsSystem = null;
+		postActivate();
+	}
+
+	@PostActivate
+	public void postActivate()
+	{
+		if (mSavingsSystem == null)
+		{
+			try
+			{
+				mSavingsSystem = new SavingsProducerJMS();
+			}
+			catch (JMSException ex)
+			{
+				Logger.getLogger(HomeLoanBean.class.getName()).
+						log(Level.SEVERE, null, ex);
+			}
+			catch (NamingException ex)
+			{
+				Logger.getLogger(HomeLoanBean.class.getName()).
+						log(Level.SEVERE, null, ex);
+			}
+		}
+	}
+
+	@PrePassivate
+	@PreDestroy
+	public void close()
+	{
+		// We should somehow close the JMS connection in SavingsProducer?
+	}
+
+	@Override
+	public long createHomeLoanAccount(int aIDCustomer,
+			BigDecimal aAmountBorrowed,
+			String aCurrentJob, String aSalaryYear, String aContact,
+			int aContactType)
+			throws ApplicationLogicException
+	{
+		// Check requirements for HomeLoan first
+
+		// Amount borrowed must be > 0
+		if (aAmountBorrowed.compareTo(BigDecimal.ZERO) <= 0)
+		{
+			throw new ApplicationLogicException("Invalid loan amount!");
+		}
+
+		// Must have a Savings account must exist and must have at least 3 
+		// deposits made into it
+		if (mSavingsSystem.isCustomerValidForHomeLoan(aIDCustomer) == false)
+		{
+			throw new ApplicationLogicException(
+					"Require at least 3 deposits into a savings account to be eligable for home loans.");
+		}
+
+		try
+		{
+			mTransaction.begin();
+
+			HomeLoan lHomeLoan = new HomeLoan();
+
+			lHomeLoan.setCustomerId(aIDCustomer);
+			lHomeLoan.setAmountBorrowed(aAmountBorrowed);
+			lHomeLoan.setCurrentJob(aCurrentJob);
+			lHomeLoan.setSalaryYear(aSalaryYear);
+			lHomeLoan.setContact(aContact);
+			lHomeLoan.setContactType(aContactType);
+
+			mEntManager.persist(lHomeLoan);
+
+			mTransaction.commit();
+			return lHomeLoan.getId();
+		}
+		catch (Exception aException)
+		{
+			Logger.getLogger(HomeLoanBean.class.getName()).
+					log(Level.SEVERE, null, aException);
+			try
+			{
+				mTransaction.rollback();
+			}
+			catch (Exception aException2)
+			{
+				Logger.getLogger(HomeLoanBean.class.getName()).
+						log(Level.SEVERE, null, aException2);
+			}
+		}
+
+		throw new ApplicationLogicException("Could not create home loan.");
+	}
+
+	@Override
+	public Customer getCustomerDetails(int aIDCustomer) throws ApplicationLogicException
+	{
+		return mSavingsSystem.getCustomerDetails(aIDCustomer);
+	}
+
+	@Override
+	public Savings getSavingsDetails(int aIDSavings) throws ApplicationLogicException
+	{
+		return mSavingsSystem.getSavingsDetails(aIDSavings);
+	}
+
+	@Override
+	public entitydata.HomeLoan getHomeLoanDetails(long aIDHomeLoan) throws ApplicationLogicException
+	{
+		HomeLoan lLoanEnt = mEntManager.find(HomeLoan.class, aIDHomeLoan);
+		if (lLoanEnt == null)
+		{
+			throw new ApplicationLogicException("Home loan does not exist.");
+		}
+		entitydata.HomeLoan lLoan = new entitydata.HomeLoan(
+				lLoanEnt.getCustomerId(),
+				lLoanEnt.getCurrentJob(),
+				lLoanEnt.getSalaryYear(),
+				lLoanEnt.getContact(),
+				lLoanEnt.getContactType(),
+				lLoanEnt.getAmountBorrowed(),
+				lLoanEnt.getAmountRepayed());
+	
+		return lLoan;
+	}
+
+	@Override
+	public List<Integer> getSavingsIdList(int aIDCustomer) throws ApplicationLogicException
+	{
+		return mSavingsSystem.getSavingsIdList(aIDCustomer);
+	}
+
+	@Override
+	public List<Long> getHomeLoanIdList(int aIDCustomer) throws ApplicationLogicException
+	{
+		CriteriaQuery lCritQuery = mEntManager.getCriteriaBuilder().
+				createQuery();
+		lCritQuery.select(lCritQuery.from(HomeLoan.class));
+		Query lQuery = mEntManager.createQuery(lCritQuery);
+
+		List<HomeLoan> lEntList = lQuery.getResultList();
+		List<Long> lIdList = new ArrayList<Long>();
+		for (HomeLoan lEnt : lEntList)
+		{
+			lIdList.add(lEnt.getId());
+		}
+
+		return lQuery.getResultList();
+	}
+
+	@Override
+	public void repayHomeLoanAccount(long aHomeLoanId, int aIDSavings,
+			BigDecimal aAmount) throws ApplicationLogicException
+	{
+		// Must use JMS
+		// Must have transaction support
+		// Must be atomic
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public boolean authenticateLogin(int aIDCustomer, String aPassword)
+			throws ApplicationLogicException
+	{
+		return mSavingsSystem.verifyCustomerLogin(aIDCustomer, aPassword);
+	}
+}

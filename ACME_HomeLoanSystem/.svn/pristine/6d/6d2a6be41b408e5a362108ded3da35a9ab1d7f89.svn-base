@@ -1,0 +1,50 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import javax.ejb.EJB;
+import javax.enterprise.context.ApplicationScoped;
+
+@Named(value = "testBean")
+@ApplicationScoped
+public class TestBean implements Serializable
+{
+
+	@EJB
+	private HomeLoanClientRemote mClient;
+	
+	private String text;
+
+	public TestBean()
+	{
+	}
+
+	public String getText()
+	{
+		return text;
+	}
+
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+	
+	public String getTestString()
+	{
+		try
+		{
+			// return mClient.getCustomerFullName(2);
+			return "Return value: " + mClient.createHomeLoanAccount(0, new BigDecimal("0"), "currentJob", "salaryYear", "aContact", 0);
+		}
+		catch (ApplicationLogicException e)
+		{
+			return "Exception thrown: " + e.getUserMessage();
+		}
+		catch (Exception e)
+		{
+			return "Exception thrown: " + e.getMessage();
+		}
+	}
+}

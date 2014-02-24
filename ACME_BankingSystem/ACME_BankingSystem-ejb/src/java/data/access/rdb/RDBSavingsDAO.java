@@ -1,13 +1,16 @@
 package data.access.rdb;
 
 /**
- *
- * @author nanxinglin
+ * Relational database implementation of Savings data access object.
+ * @author nanxinglin, Peter
  */
+import data.Savings;
 import java.sql.*;
-import data.*;
 import data.access.*;
 import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RDBSavingsDAO implements SavingsDAO
 {
@@ -176,6 +179,78 @@ public class RDBSavingsDAO implements SavingsDAO
 			sqle.printStackTrace();
 			throw new ApplicationLogicException(
 					"SYSTEM ERROR: SQL exception thrown when fetching savings account count.");
+		}
+	}
+
+	@Override
+	public List<Integer> getSavingsIdList(int aIDCustomer) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
+					"SELECT ID_SAVINGS FROM ACMEBANK.SAVINGS WHERE ID_CUSTOMER = ?");
+
+			lStatement.setInt(1, aIDCustomer);
+
+			ResultSet lResult = lStatement.executeQuery();
+			
+			ArrayList<Integer> lIdList = new ArrayList<Integer>();
+			while (lResult.next())
+			{
+				lIdList.add(lResult.getInt(1));
+			}
+			return lIdList;
+
+		}
+		catch (SQLException sqle)
+		{
+			sqle.printStackTrace();
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown when fetching savings account count.");
+		}
+	}
+
+	@Override
+	public int getDepositCount(int aIDSavings) throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
+					"SELECT COUNT(*) FROM ACMEBANK.BANKTRANSACTION WHERE ID_SAVINGS = ? AND AMOUNT > 0");
+
+			lStatement.setInt(1, aIDSavings);
+
+			ResultSet lResult = lStatement.executeQuery();
+			lResult.next();
+			return lResult.getInt(1);
+
+		}
+		catch (SQLException sqle)
+		{
+			sqle.printStackTrace();
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown when fetching savings account deposit count.");
+		}
+	}
+	
+	@Override
+	public BigDecimal getTotalSavingsBalance() throws ApplicationLogicException
+	{
+		try
+		{
+			PreparedStatement lStatement = mDBConnection.prepareStatement(
+					"SELECT SUM(BALANCE) FROM ACMEBANK.SAVINGS");
+
+			ResultSet lResult = lStatement.executeQuery();
+			lResult.next();
+			return lResult.getBigDecimal(1);
+
+		}
+		catch (SQLException sqle)
+		{
+			sqle.printStackTrace();
+			throw new ApplicationLogicException(
+					"SYSTEM ERROR: SQL exception thrown when fetching savings account balance.");
 		}
 	}
 }

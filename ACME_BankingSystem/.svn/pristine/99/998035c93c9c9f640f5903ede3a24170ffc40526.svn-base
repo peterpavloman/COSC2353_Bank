@@ -1,0 +1,40 @@
+1. Customer login
+	JPA Entity
+
+2. Create a HomeLoan account (Amount borrowed entered during account creation)
+	Business rules:
+	- Can only be opened when there is a saving account
+	- Must have 3 or more deposits in saving account (customers must prove they can make regular deposits)
+		- Across ALL saving accounts (eg. acc1 has 2 deposits, acc2 has 1 deposit = valid)
+	JPA Entity
+
+3. Make a repayment to a HomeLoan account. Money must come from Savings account. Use JMS.
+	- Must have transaction support
+
+	Create HOMELOANTRANSACTION table
+		id primary key
+		BANKTRANSACTION.ID_BANKTRANSACTION foreign key
+		ID_HOMELOANACCOUNT required
+		
+	JPA Entity for home loan operation
+	JMS for saving operation (may need to modify ass1 to return transaction id whenever withdrawing / depositing)
+		
+4. List all customer accounts (Savings & HomeLoan). Get data from Sub-System 1 using JMS.
+	
+	Use JPA Entity for listing accounts
+	JMS for the $ amount in Savings accounts
+	JPA Entity for $ amount in HomeLoan accounts
+
+5. Expose a rest web service that a third party system can use to retreive investor data. The web
+service should return the total amount of money the bank has from all of its savings accounts..
+This will need to use JMS to connect to Sub-System1.
+
+	Use JPA Entity for listing accounts
+	JMS for the $ amount in Savings accounts
+
+
+
+JMS
+	- When establishing JMS connection, HomeLoan application transmits Employee login/password for a 'service' account
+	to the SavingsApplication's message bean.
+	- Message bean will save Employee login/password details and use it for any operations with SavingApplication bean

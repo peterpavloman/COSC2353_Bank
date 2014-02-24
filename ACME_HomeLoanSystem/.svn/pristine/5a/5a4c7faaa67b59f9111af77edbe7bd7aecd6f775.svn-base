@@ -1,0 +1,55 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import exceptions.LoginFailureException;
+import java.util.List;
+import javax.ejb.Stateful;
+import javax.ejb.LocalBean;
+
+/**
+ *
+ * @author s3286430
+ */
+@Stateful
+@LocalBean
+public class CustomerClientBean
+{
+
+	private boolean mLoggedIn;
+	private int mCustomerId;
+
+	public boolean getIsLoggedIn()
+	{
+		return mLoggedIn;
+	}
+
+	public int createHomeLoanAccount(int aSavingsId, int aAmountBorrowed) 
+			throws ApplicationLogicException, LoginFailureException
+	{
+		return 0;
+	}
+	
+	public void repayHomeLoanAccount(int aHomeLoanId, int aSavingsId, int aAmount)
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS
+		// Must have transaction support
+		// Must be atomic
+	}
+	
+	public List<String> getSavingsAccounts()
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS
+		return null;
+	}
+	
+	public List<String> getHomeLoanAccounts()
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS? Not sure
+		return null;
+	}
+	
+	
+}

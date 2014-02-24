@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>ACME Home Loan Login</title>
+    </h:head>
+    <h:body>
+		<ui:composition template="template.xhtml">
+			<ui:define name="top">
+				<h2 class="text-center text-l">ACME Home Loan</h2>
+			</ui:define>
+			<ui:define name="content">
+				<h:form>
+					<center>
+						<p:panel header="Account Sign In" id="signin" styleClass="span-l">
+							<h:panelGrid columns="3" columnClasses="text-bold pad-right span3,,">
+								<h:outputLabel for="username" value="Username"/>
+								<p:inputText id="username" label="Username" value=""/>
+								<p:message for="username"/>
+
+								<h:outputLabel for="password" value="Password"/>
+								<p:password id="password"/>
+								<p:message for="password"/>
+
+								<h:panelGroup/>
+								<p:commandButton  value="Sign In" id="signinBtn"/>
+								<h:panelGroup/>
+							</h:panelGrid>
+						</p:panel>
+						<p:draggable for="signin" containment="parent"/>
+					</center>
+				</h:form>
+			</ui:define>
+		</ui:composition>
+    </h:body>
+</html>
+

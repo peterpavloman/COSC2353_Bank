@@ -1,0 +1,24 @@
+package beans;
+
+import entitydata.Customer;
+import java.io.Serializable;
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
+@Named(value="userSession")
+@SessionScoped
+public class UserSession implements Serializable{
+	@EJB
+	private Customer	user;
+	private String		id;
+
+	public UserSession(String id){
+		this.id= id;
+	}
+
+	public String	getID(){ return id; }
+	public void		setID(String id){ this.id= id; }
+	public void		addUser(Customer c){ user= c; }
+	public Customer getUser(){ return user; }
+}

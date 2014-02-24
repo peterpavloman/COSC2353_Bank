@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	
+	<p:tab title="Contact">
+		<p:panel header="Contact Details">
+			<h:panelGrid columns="3" columnClasses="text-bold pad-right span-m,,">
+				<h:outputLabel value="Email" for="email"/>
+				<p:inputText id="email" label="Email" requiredMessage="Email is required." validatorMessage="Invalid email format.">
+					<f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"/>
+					<!--the value of pattern attribute was come from http://www.mkyong.com/jsf2/primefaces/primefaces-jsf-email-validator-example/-->
+				</p:inputText>
+				<p:message for="email"/>
+
+				<h:outputLabel value="Phone" for="phone"/>
+				<p:inputMask id="phone" label="Phone" mask="(99) 9999 9999" requiredMessage="Phone is required."/>
+				<p:message for="phone"/>
+
+				<p:outputLabel for="address" value="Address"/>
+				<p:inputText id="address" label="Address" value="#{customer.address}" size="40"/>
+				<p:message for="address"/>
+
+				<h:outputLabel value="Preferred Contact" for="contactType"/>
+				<p:selectOneRadio id="contactType" required="true">
+					<f:selectItem itemValue="email" itemLabel="Email"/>
+					<f:selectItem itemValue="phone" itemLabel="Phone"/>
+					<f:selectItem itemValue="mail" itemLabel="Mail"/>
+				</p:selectOneRadio>
+				<p:message for="contactType"/>
+			</h:panelGrid>
+		</p:panel>
+	</p:tab>
+
+</html>

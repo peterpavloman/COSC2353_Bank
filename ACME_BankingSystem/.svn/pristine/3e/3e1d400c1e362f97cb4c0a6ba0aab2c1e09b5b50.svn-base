@@ -1,0 +1,20 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package beans;
+
+import javax.ejb.Stateful;
+
+/**
+ *
+ * @author narks
+ */
+@Stateful
+public class HomeLoanClientBean implements HomeLoanClientBeanRemote
+{
+
+	// Add business logic below. (Right-click in editor and choose
+	// "Insert Code > Add Business Method")
+
+}

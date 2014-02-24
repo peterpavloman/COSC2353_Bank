@@ -6,7 +6,7 @@ import exceptions.ApplicationLogicException;
 /**
  * Data Access Object interface for Customers.
  * 
- * @author s3286430
+ * @author Peter
  */
 public interface CustomerDAO 
 {

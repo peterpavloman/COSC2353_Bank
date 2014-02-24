@@ -1,0 +1,22 @@
+package beans;
+
+import javax.inject.Named;
+import javax.enterprise.context.SessionScoped;
+import java.io.Serializable;
+import javax.ejb.EJB;
+
+@Named(value="test")
+@SessionScoped
+public class Test implements Serializable{
+//	@EJB
+	//private CustomerClientBean customer;
+
+	private String text= "Hello world";
+	public Test(){}
+	//public CustomerClientBean getCustomer(){ return customer; }
+	public String getText(){ return text; }
+
+	public String getText(int a, String b){
+		return a+ b;
+	}
+}

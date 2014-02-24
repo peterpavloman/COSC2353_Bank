@@ -1,0 +1,84 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import javax.ejb.EJB;
+import javax.enterprise.context.ApplicationScoped;
+
+@Named(value = "testBean")
+@ApplicationScoped
+public class TestBean implements Serializable
+{
+
+	@EJB
+	private HomeLoanBeanRemote mClient;
+	private String text;
+	
+	@EJB
+	private ThirdPartyInvestorBeanRemote mInvestor;
+
+	public TestBean()
+	{
+	}
+
+	public String getText()
+	{
+		return text;
+	}
+
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+
+	public String getTestString()
+	{
+		try
+		{
+			// Customer lCustomer = mClient.getCustomerDetails(2);
+			/*
+			 if (mClient.authenticateLogin(2, "secret"))
+			 {
+			 return "Login success!";
+			 }
+			 else
+			 {
+			 return "failure!";
+			 }
+			 */
+
+			// return lCustomer.getFirstName() + " was born on " + lCustomer.getDateOfBirth().toString();
+			
+			/*
+			return "Return value: " + mClient.createHomeLoanAccount(
+					5,
+					new BigDecimal("1000"), "currentJob", "salaryYear", "0407044044",
+					"bigbusiness@hellokitty.com",
+					0);
+			*/
+			// return mClient.getHomeLoanIdList(5).toString();
+			
+			// return mClient.getHomeLoanDetails(52).getCurrentJob();
+			
+			/*
+			mClient.repayHomeLoanAccount(5, 102, 8,
+					new BigDecimal(501));
+			
+			return mClient.getHomeLoanIdList(5).toString();
+			*/
+			
+			BigDecimal lBalance = mInvestor.getTotalSavingsBalance();
+			return lBalance.toString();
+		}
+		catch (ApplicationLogicException e)
+		{
+			return "Exception thrown: " + e.getUserMessage();
+		}
+		catch (Exception e)
+		{
+			throw e;
+		}
+	}
+}

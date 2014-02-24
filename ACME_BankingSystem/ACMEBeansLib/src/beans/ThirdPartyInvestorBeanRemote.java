@@ -1,0 +1,21 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import java.util.List;
+import javax.ejb.Remote;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Remote
+public interface ThirdPartyInvestorBeanRemote
+{
+
+	public List<Long> getHomeLoanIdList() throws ApplicationLogicException;
+	public entitydata.HomeLoan getHomeLoanDetails(Long aHomeLoanId) throws ApplicationLogicException;
+	
+	public BigDecimal getTotalSavingsBalance() throws ApplicationLogicException;
+        
+}

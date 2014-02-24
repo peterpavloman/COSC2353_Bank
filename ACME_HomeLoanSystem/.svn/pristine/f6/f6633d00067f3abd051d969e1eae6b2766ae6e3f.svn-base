@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>ACME Home Loan Account Details</title>
+    </h:head>
+    <h:body>
+		<ui:composition template="template.xhtml">
+			<ui:define name="top">
+				<h2 class="text-l text-center">Account Details</h2>
+			</ui:define>
+
+			<ui:define name="content">
+				<h:form>
+					<p:panel header="Basic" id="basic">
+						<h:panelGrid columns="3" columnClasses="text-bold pad-right span-m,,">
+							<h:outputLabel for="firstName" value="First Name"/>
+							<p:inputText id="firstName" label="First Name" required="true"
+										 requiredMessage="First name is required.">
+								<f:validateRegex pattern="[a-zA-Z ]+"/>
+							</p:inputText>
+							<p:message for="firstName"/>
+
+							<h:outputLabel for="lastName" value="Last Name"/>
+							<p:inputText id="lastName" label="Last Name" required="true"
+										 requiredMessage="Last name is required.">
+								<f:validateRegex pattern="[a-zA-Z ]+"/>
+							</p:inputText>
+							<p:message for="lastName"/>
+
+							<h:outputLabel for="dob" value="Date of Birth"/>
+							<p:calendar id="dob" label="Date of Birth" value="#{customer.dateOfBirth}" yearRange="1913" maxdate="31/12/95"
+										readonlyInput="true" pattern="dd/MM/yyyy" navigator="true" required="true"
+										requiredMessage="Date of birth is required."/>
+							<p:message for="dob"/>
+						</h:panelGrid>
+					</p:panel>
+
+					<p:panel header="Contact" id="contact">
+						<h:panelGrid columns="3" columnClasses="text-bold pad-right span-m,,">
+
+							<h:outputLabel value="Email" for="email"/>
+							<p:inputText id="email" label="Email" requiredMessage="Email is required." validatorMessage="Invalid email format.">
+								<f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"/>
+								<!--the value of pattern attribute was come from http://www.mkyong.com/jsf2/primefaces/primefaces-jsf-email-validator-example/-->
+							</p:inputText>
+							<p:message for="email"/>
+
+							<h:outputLabel value="Phone" for="phone"/>
+							<p:inputMask id="phone" label="Phone" mask="(99) 9999 9999" requiredMessage="Phone is required."/>
+							<p:message for="phone"/>
+
+							<p:outputLabel for="address" value="Address"/>
+							<p:inputText id="address" label="Address" value="#{customer.address}" size="40"/>
+							<p:message for="address"/>
+
+							<h:outputLabel value="Preferred Contact" for="contactType"/>
+							<p:selectOneRadio id="contactType" required="true">
+								<f:selectItem itemValue="email" itemLabel="Email"/>
+								<f:selectItem itemValue="phone" itemLabel="Phone"/>
+								<f:selectItem itemValue="mail" itemLabel="Mail"/>
+							</p:selectOneRadio>
+							<p:message for="contactType"/>
+						</h:panelGrid>
+					</p:panel>
+
+					<p:panel header="Employment" id="employment">
+						<h:panelGrid columns="3" columnClasses="text-bold pad-right span-m,,">
+							<h:outputLabel for="company" value="Workplace/Company"/>
+							<p:inputText id="company" label="Company/Workplace" value=""/>
+							<p:message for="company"/>
+
+							<h:outputLabel for="position" value="Current Job"/>
+							<p:inputText id="position" label="Position" validatorMessage="Cannot contained any other than alphabets &amp; space.">
+								<f:validateRegex pattern="[a-zA-Z\ ]+"/>
+							</p:inputText>
+							<p:message for="position"/>
+						</h:panelGrid>
+					</p:panel>
+					<p:panel header="Agreement">
+
+					</p:panel>
+				</h:form>
+			</ui:define>
+		</ui:composition>
+    </h:body>
+</html>
+

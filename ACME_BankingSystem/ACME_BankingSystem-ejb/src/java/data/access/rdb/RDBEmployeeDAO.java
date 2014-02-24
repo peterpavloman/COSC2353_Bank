@@ -5,6 +5,10 @@ import data.access.EmployeeDAO;
 import exceptions.ApplicationLogicException;
 import java.sql.*;
 
+/**
+ * Relational database implementation of Employee data access object.
+ * @author Peter
+ */
 public class RDBEmployeeDAO implements EmployeeDAO
 {
 

@@ -1,0 +1,115 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.jms.JMSException;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+import jms.SavingsProducerBridge;
+import jms.SavingsProducerJMS;
+import jpa.entity.HomeLoan;
+
+/**
+ *
+ * @author Peter
+ */
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class ThirdPartyInvestorBean implements ThirdPartyInvestorBeanRemote
+{
+	//private ThirdPartyInvestorBeanRemote third=null;
+
+	@PersistenceContext(unitName = "ACME_HomeLoanSystem-ejbPU")
+	private EntityManager mEntManager;
+
+	@Override
+	public List<Long> getHomeLoanIdList() throws ApplicationLogicException
+	{
+		//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		CriteriaQuery lCritQuery = mEntManager.getCriteriaBuilder().
+				createQuery();
+		lCritQuery.select(lCritQuery.from(jpa.entity.HomeLoan.class));
+		Query lQuery = mEntManager.createQuery(lCritQuery);
+
+		List<jpa.entity.HomeLoan> lEntList = lQuery.getResultList();
+		List<Long> lIdList = new ArrayList<Long>();
+		for (jpa.entity.HomeLoan lEnt : lEntList)
+		{
+			lIdList.add(lEnt.getId());
+		}
+
+		return lIdList;
+//            List l=new ArrayList();
+//            l.add("123");
+//            l.add("456");
+//            return l;
+
+	}
+
+	@Override
+	public entitydata.HomeLoan getHomeLoanDetails(Long aHomeLoanId) throws ApplicationLogicException
+	{
+		jpa.entity.HomeLoan lLoanEnt = mEntManager.find(HomeLoan.class,
+				aHomeLoanId);
+		if (lLoanEnt == null)
+		{
+			throw new ApplicationLogicException("Home loan does not exist.");
+		}
+		entitydata.HomeLoan lLoan = new entitydata.HomeLoan(
+				lLoanEnt.getCustomerId(),
+				lLoanEnt.getCurrentJob(),
+				lLoanEnt.getSalaryYear(),
+				lLoanEnt.getContactPhone(),
+				lLoanEnt.getContactEmail(),
+				lLoanEnt.getContactType(),
+				lLoanEnt.getAmountBorrowed(),
+				lLoanEnt.getAmountRepayed());
+
+		return lLoan;
+	}
+
+	@Override
+	public BigDecimal getTotalSavingsBalance() throws ApplicationLogicException
+	{
+		return mSavingsSystem.getTotalSavingsBalance();
+	}
+	private SavingsProducerBridge mSavingsSystem;
+
+	@PostConstruct
+	public void postConstruct()
+	{
+		try
+		{
+			mSavingsSystem = new SavingsProducerJMS();
+		}
+		catch (JMSException ex)
+		{
+			Logger.getLogger(HomeLoanBean.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+		catch (NamingException ex)
+		{
+			Logger.getLogger(HomeLoanBean.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+	}
+
+	@PreDestroy
+	public void close()
+	{
+		// We should somehow close the JMS connection in SavingsProducer
+		mSavingsSystem.close();
+	}
+}

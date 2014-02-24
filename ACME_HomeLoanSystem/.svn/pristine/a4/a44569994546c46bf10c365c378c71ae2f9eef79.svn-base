@@ -1,0 +1,143 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package jms;
+
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.Session;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import jms.data.Customer;
+import jms.homeloan.MessageProtocolSavings;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+public class SavingsProducerJMS implements SavingsProducerBridge
+{
+
+	private Queue mACMESavingsQueue;
+	private QueueConnectionFactory mConnectionFactory;
+	private Connection mConnection;
+	private Session mSession;
+	private MessageProducer mProducer;
+	private Queue mReplyQueue;
+	private long mCorrelationIdCounter;
+	private static final long REPLY_TIMEOUT_MS = 10000;
+
+	public SavingsProducerJMS() throws JMSException, NamingException
+	{
+		Context lJDNIContext = new InitialContext();
+
+		mConnectionFactory = (QueueConnectionFactory) lJDNIContext.lookup(
+				"jms/ACMEHomeLoanQueueConnectionFactory");
+		mACMESavingsQueue = (Queue) lJDNIContext.lookup("jms/ACMESavingsQueue");
+
+		mConnection = mConnectionFactory.createConnection();
+		mConnection.start();
+		
+		// TODO: Experiment with making lSession support transactions (change to true)
+		mSession = mConnection.createSession(false,
+				Session.AUTO_ACKNOWLEDGE);
+		mProducer = mSession.createProducer(mACMESavingsQueue);
+
+		mReplyQueue = mSession.createTemporaryQueue();
+
+		mCorrelationIdCounter = 0;
+	}
+
+	@Override
+	public int withdrawFromSavingsAccount(int aIDSavingsAccount,
+			BigDecimal aAmount) throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public BigDecimal getSavingsAccountBalance(int aIDSavingsAccount) throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public boolean verifyCustomerLogin(int aIDCustomer, String aPassword) throws ApplicationLogicException
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Customer getCustomerDetails(int aIDCustomer) throws ApplicationLogicException
+	{
+		try
+		{
+			MapMessage lMessage = mSession.createMapMessage();
+
+			lMessage = MessageProtocolSavings.GetCustomerDetails.
+					formatRequestMessage(lMessage, aIDCustomer);
+
+			MapMessage lResponse = sendJMSRequest(lMessage);
+
+			if (lResponse == null)
+			{
+				throw new ApplicationLogicException("No response received.");
+			}
+			else
+			{
+				Customer lCustomer = new Customer(
+						MessageProtocolSavings.GetCustomerDetails.
+						getResponseFirstName(lResponse),
+						MessageProtocolSavings.GetCustomerDetails.
+						getResponseLastName(lResponse));
+				return lCustomer;
+			}
+		}
+		catch (JMSException aException)
+		{
+			Logger.getLogger(SavingsProducerJMS.class.getName()).
+					log(Level.SEVERE, null, aException);
+			throw new ApplicationLogicException(aException.getMessage());
+		}
+	}
+
+	private MapMessage sendJMSRequest(MapMessage aMessage) throws JMSException
+	{
+		long lCorrelationIdCounter = mCorrelationIdCounter;
+		mCorrelationIdCounter++;
+		String lCorrelationId = Long.toHexString(lCorrelationIdCounter);
+
+		// Create a destination for the reply
+		aMessage.setJMSReplyTo(mReplyQueue);
+		// aMessage.setJMSCorrelationID(lCorrelationId);
+
+		MessageConsumer lConsumer = mSession.createConsumer(mReplyQueue);
+		mProducer.send(aMessage);
+
+		// A synchronous solution, since asynchronous is more complex
+		// and doesn't provide us much of a benefit:
+		// - We wait for a message to be received (with REPLY_TIMEOUT_MS timeout)
+		// - Using MessageListener we only consume messages that have the correct ID
+
+		/*
+		MessageConsumer lConsumer = mSession.createConsumer(mReplyQueue,
+				" JMSCorrelationID = '" + lCorrelationId + "'");
+		*/
+		
+		MapMessage lResponse = (MapMessage) lConsumer.receive(REPLY_TIMEOUT_MS);
+		lConsumer.close();
+
+		return lResponse;
+	}
+}

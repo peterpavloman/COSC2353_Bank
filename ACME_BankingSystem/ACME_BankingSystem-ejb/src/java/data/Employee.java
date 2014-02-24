@@ -9,18 +9,21 @@ public class Employee
     private int mIDEmployee;
     private String mFirstName;
     private String mLastName;
-	// Probably not the best idea to have passwords stored as plaintext...
+	// TODO: passwords plaintext, refactor later
 	private String mPassword;
 
     /**
-     * Constructor for Employee class.
-	 * Initializes default required values.
+     * Employee IDs are not initialized in constructor, as we assume
+	 * that a Employee object is created and assigned an ID when added
+	 * by a data access object.
+	 * Note that any changes to the object are not persisted unless
+	 * the object is explicitly saved through a data access object.s.
      *
-     * @param aFirstName
-     * @param aLastName
-	 * @param aPassword Password (in plaintext - must change later to something
-	 * a little more secure when we cover security in class)
-     */
+     * @param aFirstName Given name of employee. Required, 100 char max.
+     * @param aLastName Surname of employee. Required, 100 char max.
+	 * @param aPassword Password (in plaintext - TODO deprecate and use hashes),
+	 * required, 64 char max.
+	 */
     public Employee(String aFirstName, String aLastName, String aPassword)
     {
         mFirstName = aFirstName;
@@ -28,46 +31,66 @@ public class Employee
 		mPassword = aPassword;
     }
 	
+	
+	/**
+     * Accessor for the given name (first name) of the employee.
+     * @param aFirstName Given name of employee. Required, 100 char max.
+     * @see setFirstName()
+     */
     public String getFirstName() { return mFirstName; }
     /**
-     * Mutator for FirstName.
-     * Note that changes must be explicitly saved via a data access object.
-     * @param aFirstName
-     * @see getFirstName()
+     * Mutator for the given name of the employee.
+     * @return Given name of employee. Required, 100 char max.
+	 * @see getFirstName()
      */
     public void setFirstName(String aFirstName)
     {
         mFirstName = aFirstName;
     }
-    /**
-     *
-     * @return
-     */
+    
+	/**
+	 * Accessor for the surname of the employee.
+	 * @return Surname of employee. Required, 100 char max.
+	 */
     public String getLastName() { return mLastName; }
-    /**
-     * Mutator for LastName.
-     * Note that changes must be explicitly saved via a data access object.
-     * @param aLastName
-     * @see getLastName()
-     */
+
+	/**
+	 * Mutator for the surname of the employee.
+	 * @param aLastName Surname of employee. Required, 100 char max.
+	 */
     public void setLastName(String aLastName)
     {
         mLastName = aLastName;
     }
+	
+
+	/**
+     * Gets unique employee ID.
+	 * @return 
+	 */
 	public int getIDEmployee() { return mIDEmployee; }
-    /**
-     *
-     * @param aIDEmployee
+	/**
+     * Sets unique employee ID.
+     * @return
      */
     public void setIDEmployee(int aIDEmployee)
     {
         mIDEmployee = aIDEmployee;
     }
+	
+	/**
+	 * Accessor for employee password (stored in plaintext, TODO: make more secure).
+	 * @return Password, required, 64 char max.
+	 */
     public String getPassword() { return mPassword; }
 
+	/**
+	 * Mutator for employee password (stored in plaintext, TODO: make more secure).
+	 * @return Password, required, 64 char max.
+	 */
 	public void setPassword(String aPassword)
 	{
-		this.setPassword(aPassword);
+		setPassword(aPassword);
 	}
 }
 

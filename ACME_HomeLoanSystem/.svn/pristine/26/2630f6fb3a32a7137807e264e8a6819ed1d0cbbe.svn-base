@@ -1,0 +1,124 @@
+package beans;
+
+import entitydata.Customer;
+import entitydata.HomeLoan;
+import entitydata.Savings;
+import exceptions.ApplicationLogicException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
+@Named(value="userSession")
+@SessionScoped
+public class UserSession implements Serializable{
+	@EJB
+	private HomeLoanBeanRemote user;
+
+	public void toRegisterPage(){ Constant.redirect("createAccount.xhtml"); }
+	public void toRepayPage(){ Constant.redirect("repayAccount.xhtml"); }
+	public void toListPage(){ Constant.redirect("listAccount.xhtml"); }
+	public void toAcountMainPage(){ Constant.redirect("action.xhtml"); }
+
+	public Customer getUser(){
+		try{
+			return user.getCustomerDetails((int) Constant.getSessionAttribute("CUSTOMERID"));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public void createHomeLoan(){
+
+	}
+
+	public class DisplaySavings{
+		private int id;
+		private String balance;
+
+		public DisplaySavings(int id, BigDecimal balance){
+			this.id		= id;
+			if(balance!= null)
+				this.balance= "$"+balance.toString();
+			else
+				this.balance= "$0";
+		}
+
+		public int getId(){ return id; }
+		public void setId(int id){ this.id = id; }
+		public String getBalance(){ return balance; }
+		public void setBalance(String balance){ this.balance = balance; }
+	}
+
+	public class DisplayHomeLoan{
+		private long id;
+		private String borrowed;
+		private String repayed;
+
+		public DisplayHomeLoan(long id, BigDecimal borrowed, BigDecimal repayed){
+			this.id			= id;
+			if(borrowed!= null)
+				this.borrowed	= "$"+ borrowed.toString();
+			else
+				this.borrowed	= "$0";
+
+			if(repayed!= null)
+				this.repayed	= "$"+ repayed.toString();
+			else
+				this.repayed	= "$0";
+		}
+
+		public long getId(){ return id; }
+		public void setId(long id){ this.id = id; }
+		public String getBorrowed(){ return borrowed; }
+		public void setBorrowed(String borrow){ this.borrowed = borrow; }
+		public String getRepayed(){ return repayed; }
+		public void setRepayed(String repayed){ this.repayed = repayed; }
+	}
+
+	public List<DisplaySavings> getSavings(){
+		List<DisplaySavings> temp= new ArrayList<>();
+		try{
+			List<Integer> id= user.getSavingsIdList((int)Constant.getSessionAttribute("CUSTOMERID"));
+			for(int i: id){
+				Savings savings= user.getSavingsDetails(i);
+				temp.add(new DisplaySavings(i, savings.getBalance()));
+			}
+
+			totalSavings= temp.size();
+		}catch(ApplicationLogicException ex){
+			ex.printStackTrace();
+		}
+
+		return temp;
+	}
+
+	public List<DisplayHomeLoan> getHomeLoans(){
+		List<DisplayHomeLoan> temp= new ArrayList<>();
+		try{
+			List<Long> id= user.getHomeLoanIdList((int)Constant.getSessionAttribute("CUSTOMERID"));
+			for(long i: id){
+				HomeLoan homeLoan= user.getHomeLoanDetails(i);
+				temp.add(new DisplayHomeLoan(i, homeLoan.getAmountBorrowed(), homeLoan.getAmountRepayed()));
+			}
+			totalHomeLoans= temp.size();
+		}catch(ApplicationLogicException ex){
+			ex.printStackTrace();
+		}
+
+		return temp;
+	}
+
+	private boolean isAgree;
+	private int		totalSavings	= 0;
+	private int		totalHomeLoans	= 0;
+	public boolean	getAgree(){ return isAgree; }
+	public void		setAgree(boolean agree){ isAgree= agree; }
+	public int		getTotalSavings(){ return totalSavings; }
+	public int		getTotalHomeLoans(){ return totalHomeLoans; }
+}

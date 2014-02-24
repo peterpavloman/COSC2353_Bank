@@ -4,16 +4,14 @@ import data.Customer;
 import data.access.CustomerDAO;
 import exceptions.ApplicationLogicException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Relational database implementation of Customer DAO.
- *
- * @author s3286430
+ * Relational database implementation of Customer data access object.
+ * @author Peter
  */
 public class RDBCustomerDAO implements CustomerDAO
 {
@@ -32,13 +30,14 @@ public class RDBCustomerDAO implements CustomerDAO
 		{
 			PreparedStatement lStatement = mDBConnection.prepareStatement(
 					"INSERT INTO ACMEBANK.CUSTOMER(firstname, lastname,"
-					+ "dateofbirth, address) VALUES (?,?,?,?)",
+					+ "dateofbirth, address, password) VALUES (?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			lStatement.setString(1, aCustomer.getFirstName());
 			lStatement.setString(2, aCustomer.getLastName());
 			lStatement.setString(3, aCustomer.getDateOfBirth().toString());
 			lStatement.setString(4, aCustomer.getAddress());
+			lStatement.setString(5, aCustomer.getPassword());
 
 			lStatement.executeUpdate();
 
@@ -61,8 +60,8 @@ public class RDBCustomerDAO implements CustomerDAO
 		try
 		{
 			PreparedStatement statement = mDBConnection.prepareStatement(
-					"SELECT firstname, lastname, dateofbirth, address FROM "
-					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?;");
+					"SELECT firstname, lastname, dateofbirth, address, password FROM "
+					+ "ACMEBANK.CUSTOMER WHERE id_customer = ?");
 
 			statement.setInt(1, aIDCustomer);
 			ResultSet result = statement.executeQuery();
@@ -70,7 +69,7 @@ public class RDBCustomerDAO implements CustomerDAO
 			if (result.next())
 			{
 				Customer lCustomer = new Customer(result.getString(1), result.getString(2),
-						result.getDate(3), result.getString(4));
+						result.getDate(3), result.getString(4), result.getString(5));
 				lCustomer.setIDCustomer(aIDCustomer);
 				
 				return lCustomer;
@@ -99,14 +98,15 @@ public class RDBCustomerDAO implements CustomerDAO
 			 */
 			PreparedStatement lStatement = mDBConnection.prepareStatement(
 					"UPDATE ACMEBANK.CUSTOMER SET firstname=?, lastname=?, "
-					+ "dateofbirth=?, address=? WHERE id_customer=?;");
+					+ "dateofbirth=?, address=?, password=? WHERE id_customer=?");
 
 			lStatement.setString(1, aCustomer.getFirstName());
 			lStatement.setString(2, aCustomer.getLastName());
 			lStatement.setDate(3, aCustomer.getDateOfBirth());
 			lStatement.setString(4, aCustomer.getAddress());
+			lStatement.setString(5, aCustomer.getPassword());
 
-			lStatement.setInt(5, aCustomer.getIDCustomer());
+			lStatement.setInt(6, aCustomer.getIDCustomer());
 
 			int lRowsAffected = lStatement.executeUpdate();
 			lStatement.close();

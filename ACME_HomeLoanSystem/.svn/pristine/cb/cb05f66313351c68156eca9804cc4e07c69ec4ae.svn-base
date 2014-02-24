@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Repay Home Loan</title>
+    </h:head>
+
+	<h:body>
+		<ui:composition template="template.xhtml">
+			<ui:define name="top">
+				<h2 class="text-l text-center">Account Details</h2>
+			</ui:define>
+
+			<ui:define name="content">
+				<h:form rendered="#{userAction.loggedIn}">
+					<p:panel header="Repay Home Loan">
+						<h:panelGrid columns="2" columnClasses="text-bold span-l,">
+							<h:outputLabel for="savingId" value="Saving Account"/>
+							<p:selectOneMenu value="#{userSession.savingID}" required="true" requiredMessage="Saving ID is required.">
+								<f:selectItem itemLabel="" itemValue=""/>
+								<f:selectItems value="#{userSession.savingIds}"/>
+							</p:selectOneMenu>
+
+							<h:outputLabel for="homeLoadId" value="Home Loan Account"/>
+							<p:selectOneMenu value="#{userSession.homeLoanID}" required="true" requiredMessage="Home loan ID is required.">
+								<f:selectItem itemLabel="" itemValue=""/>
+								<f:selectItems value="#{userSession.homeLoanIds}"/>
+							</p:selectOneMenu>
+
+							<h:outputLabel for="repayAmount" value="Repay Amount"/>
+							<p:inputText id="repayAmount" required="true" requiredMessage="Repay amount is required." value="#{userSession.repayAmount}"/>
+
+							<h:panelGroup/>
+							<p:commandButton id="repay" value="Repay" actionListener="#{userSession.repayHomeLoan()}" ajax="false"/>
+
+							<h:panelGroup/>
+						</h:panelGrid>
+						<p:messages/>
+					</p:panel>
+				</h:form>
+				<h:form>
+					<p:splitButton value="Back to Account Home" actionListener="#{userSession.toAcountMainPage()}" icon="ui-icon-home">
+						<p:menuitem value="Log Out" actionListener="#{userAction.logout()}" icon="ui-icon-close"/>
+					</p:splitButton>
+				</h:form>
+			</ui:define>
+		</ui:composition>
+    </h:body>
+</html>
+

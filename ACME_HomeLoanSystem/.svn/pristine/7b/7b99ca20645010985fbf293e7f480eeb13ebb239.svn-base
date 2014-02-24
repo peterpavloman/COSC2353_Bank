@@ -1,0 +1,23 @@
+package beans;
+
+import javax.inject.Named;
+import java.io.Serializable;
+import javax.enterprise.context.ApplicationScoped;
+
+@Named(value="testBean")
+@ApplicationScoped
+public class TestBean implements Serializable{
+	private String text;
+	public TestBean(){
+	}
+
+	public String getText(){
+		return text;
+	}
+
+	public void setText(String text){
+		this.text = text;
+	}
+
+	public String getHello(){ return "hello world"; }
+}

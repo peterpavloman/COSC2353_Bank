@@ -1,0 +1,107 @@
+package beans;
+
+import exceptions.ApplicationLogicException;
+import exceptions.LoginFailureException;
+import java.io.Serializable;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.LocalBean;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Stateless;
+import javax.jms.JMSException;
+import javax.naming.NamingException;
+import jms.SavingsProducerBridge;
+import jms.SavingsProducerJMS;
+
+/**
+ *
+ * @author Peter (s3286430)
+ */
+@Stateless
+@LocalBean
+public class CustomerClientBean implements Serializable
+{
+
+	private boolean mLoggedIn;
+	private int mCustomerId;
+	private SavingsProducerBridge mSavingsSystem;
+
+	@PostConstruct
+	public void postConstruct()
+	{
+		mLoggedIn = false;
+		mCustomerId = 0;
+		postActivate();
+	}
+
+	@PostActivate
+	public void postActivate()
+	{
+		try
+		{
+			mSavingsSystem = new SavingsProducerJMS();
+		}
+		catch (JMSException ex)
+		{
+			Logger.getLogger(CustomerClientBean.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+		catch (NamingException ex)
+		{
+			Logger.getLogger(CustomerClientBean.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+	}
+
+	@PrePassivate
+	@PreDestroy
+	public void close()
+	{
+		// We should somehow close the JMS connection in SavingsProducer?
+	}
+
+	public boolean getIsLoggedIn()
+	{
+		return mLoggedIn;
+	}
+
+	public String getCustomerFullName() throws ApplicationLogicException,
+			LoginFailureException
+	{
+		// Experimental
+		return mSavingsSystem.getCustomerFullName(2);
+	}
+
+	public int createHomeLoanAccount(int aSavingsId, int aAmountBorrowed)
+			throws ApplicationLogicException, LoginFailureException
+	{
+		return 0;
+	}
+
+	public void repayHomeLoanAccount(int aHomeLoanId, int aSavingsId,
+			int aAmount)
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS
+		// Must have transaction support
+		// Must be atomic
+	}
+
+	public List<String> getSavingsAccounts()
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS
+		return null;
+	}
+
+	public List<String> getHomeLoanAccounts()
+			throws ApplicationLogicException, LoginFailureException
+	{
+		// Must use JMS? Not sure
+		return null;
+	}
+}

@@ -1,0 +1,22 @@
+package data.access;
+
+import data.access.exception.NonexistentEntityException;
+import data.access.exception.RollbackFailureException;
+import data.jpa.HomeLoan;
+import java.util.List;
+
+/**
+ * Data Access Object interface for Customers.
+ * 
+ * @author s3286430
+ */
+public interface HomeLoanDAO 
+{
+    public void create(HomeLoan aHomeLoan) throws RollbackFailureException, Exception;
+	public void edit(HomeLoan aHomeLoan) throws NonexistentEntityException, RollbackFailureException, Exception;
+	public void destroy(Long aID) throws NonexistentEntityException, RollbackFailureException, Exception;
+	public List<HomeLoan> findHomeLoanEntities();
+	public List<HomeLoan> findHomeLoanEntities(int aMaxResults, int aFirstResult);
+	public HomeLoan findHomeLoan(Long aId);
+	public int getHomeLoanCount();
+}

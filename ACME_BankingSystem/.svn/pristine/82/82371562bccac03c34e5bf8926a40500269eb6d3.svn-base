@@ -1,0 +1,115 @@
+package jms;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.Session;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import jms.homeloan.MessageProtocolSavings;
+
+/**
+ * Receives messages from the HomeLoan system and hands them off a
+ * MessageHandler for business logic.
+ *
+ * @author Peter (s3286430)
+ */
+@MessageDriven(activationConfig =
+{
+	@ActivationConfigProperty(propertyName = "destinationType",
+			propertyValue = "javax.jms.Queue"),
+	@ActivationConfigProperty(propertyName = "destinationLookup",
+			propertyValue = "jms/ACMESavingsQueue")
+})
+@TransactionManagement(TransactionManagementType.BEAN)
+// @TransactionAttribute(TransactionAttributeType.NEVER)
+public class HomeLoanMDB implements MessageListener
+{
+	
+	private QueueConnectionFactory mConnectionFactory;
+	
+	public HomeLoanMDB() throws NamingException
+	{
+		Context lJDNIContext = new InitialContext();
+		
+		mConnectionFactory = (QueueConnectionFactory) lJDNIContext.lookup(
+				"jms/ACMESavingsQueueConnectionFactory");
+	}
+	
+	private MapMessage getResponseMessage(MapMessage aReceivedMessage,
+			Session aSession) throws JMSException
+	{
+		MapMessage lResponse;
+		
+		Class lResponseType = MessageProtocolSavings.getMessageType(
+				aReceivedMessage);
+		
+		if (lResponseType == MessageProtocolSavings.GetCustomerDetails.class)
+		{
+			lResponse = aSession.createMapMessage();
+			
+			lResponse = MessageProtocolSavings.GetCustomerDetails.
+					formatResponseMessage(
+					lResponse, "John", "Stalverns");
+			
+			return lResponse;
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public void onMessage(Message aMessage)
+	{
+		try
+		{
+			Destination aDestination = aMessage.getJMSReplyTo();
+			if (aDestination != null)
+			{
+				
+				Connection lConnection = mConnectionFactory.createConnection();				
+				Session lSession = lConnection.createSession(false,
+						Session.AUTO_ACKNOWLEDGE);
+				
+				MapMessage lResponseMsg = getResponseMessage(
+						(MapMessage) aMessage, lSession);
+				
+				if (lResponseMsg != null)
+				{
+					MessageProducer lProducer = lSession.createProducer(
+							aDestination);
+					
+					lResponseMsg.setJMSCorrelationID(aMessage.
+							getJMSCorrelationID());
+					
+					lProducer.send(lResponseMsg);
+					lProducer.close();
+					
+				}
+
+				lSession.close();
+				lConnection.close();
+			}
+		}
+		catch (JMSException ex)
+		{
+			Logger.getLogger(HomeLoanMDB.class.getName()).
+					log(Level.SEVERE, null, ex);
+		}
+		
+	}
+}

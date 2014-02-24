@@ -1,0 +1,30 @@
+package beans;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
+
+@Named(value= "customer")
+@ViewScoped
+public class Customer{
+	private String	firstName, lastName, address;
+	private Date	dateOfBirth;
+
+	public Customer(){}
+
+	public String	getFirstName(){ return firstName; }
+	public void		setFirstName(String firstName){ this.firstName = firstName; }
+	public String	getLastName(){ return lastName; }
+	public void		setLastName(String lastName){ this.lastName = lastName; }
+	public String	getAddress(){ return address; }
+	public void		setAddress(String address){ this.address = address; }
+	public Date		getDateOfBirth(){ return dateOfBirth; }
+	public void		setDateOfBirth(Date dateOfBirth){ this.dateOfBirth = dateOfBirth; }
+
+	public String	getFormattedDob(){
+		SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
+		return format.format(dateOfBirth);
+	}
+	
+}

@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core">
+	<h:head>
+        <title>ACME Account Entries</title>
+    </h:head>
+
+	<h:body>
+		<ui:composition template="template.xhtml">
+			<ui:define name="top">
+				<h2 class="text-l text-center">Data Entries</h2>
+			</ui:define>
+
+			<ui:define name="content">
+				<center>
+					<h:form rendered="#{userAction.loggedIn}" styleClass="span-dxl">
+
+						<p:dataTable value="#{userSession.savings}" var="saving">
+							<f:facet name="header">Saving Accounts</f:facet>
+							<p:column headerText="Saving ID">
+								<h:outputText value="#{saving.id}"/>
+							</p:column>
+
+							<p:column headerText="Current Balance">
+								<h:outputText value="#{saving.balance}"/>
+							</p:column>
+
+							<f:facet name="footer">Total Accounts: #{userSession.totalSavings}</f:facet>
+						</p:dataTable>
+
+						<br/>
+
+						<p:dataTable value="#{userSession.homeLoans}" var="homeLoan">
+							<f:facet name="header">Home Loan Accounts</f:facet>
+							<p:column headerText="Home Loan ID">
+								<h:outputText value="#{homeLoan.id}"/>
+							</p:column>
+							<p:column headerText="Amount Borrowed">
+								<h:outputText value="#{homeLoan.borrowed}"/>
+							</p:column>
+							<p:column headerText="Amount Repayed">
+								<h:outputText value="#{homeLoan.repayed}"/>
+							</p:column>
+							<f:facet name="footer">Total Accounts: #{userSession.totalHomeLoans}</f:facet>
+						</p:dataTable>
+
+						<br/>
+						<p:splitButton value="Back to Account Home" actionListener="#{userSession.toAcountMainPage()}" icon="ui-icon-home">
+							<p:menuitem value="Log Out" actionListener="#{userAction.logout()}" icon="ui-icon-close"/>
+						</p:splitButton>
+
+					</h:form>
+				</center>
+			</ui:define>
+		</ui:composition>
+    </h:body>
+</html>
+

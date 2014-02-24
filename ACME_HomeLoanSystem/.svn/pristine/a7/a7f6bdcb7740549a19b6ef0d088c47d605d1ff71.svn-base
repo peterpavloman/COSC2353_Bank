@@ -1,0 +1,49 @@
+package jms;
+
+import exceptions.ApplicationLogicException;
+import java.math.BigDecimal;
+import entitydata.Customer;
+import entitydata.Savings;
+import java.util.List;
+
+/**
+ * Provides an interface of business-logic related methods that are performed on
+ * the Assignment1 Savings system.
+ *
+ * This interface is intended to be implemented using synchronous JMS.
+ *
+ * @author Peter (s3286430)
+ */
+public abstract interface SavingsProducerBridge
+{
+
+	/**
+	 * Withdraws money from a Savings account.
+	 *
+	 * @param aIDSavingsAccount Savings account ID to withdraw from.
+	 * @param aAmount Amount to be withdrawn.
+	 * @return Transaction ID of operation.
+	 * @throws ApplicationLogicException Thrown if the operation fails for some
+	 * reason (database error, invalid ID or amount, etc).
+	 */
+	public abstract boolean withdrawFromSavingsAccount(int aIDSavingsAccount,
+			BigDecimal aAmount) throws ApplicationLogicException;
+
+	public abstract Savings getSavingsDetails(int aIDSavings)
+			throws ApplicationLogicException;
+
+	public abstract boolean verifyCustomerLogin(int aIDCustomer,
+			String aPassword)
+			throws ApplicationLogicException;
+
+	public abstract Customer getCustomerDetails(int aIDCustomer)
+			throws ApplicationLogicException;
+
+	public abstract List<Integer> getSavingsIdList(int aIDCustomer)
+			throws ApplicationLogicException;
+
+	public abstract boolean isCustomerValidForHomeLoan(int aIDCustomer)
+			throws ApplicationLogicException;
+
+	public abstract BigDecimal getTotalSavingsBalance() throws ApplicationLogicException;
+}

@@ -1,0 +1,26 @@
+package jms;
+
+import java.math.BigDecimal;
+
+/**
+ * A data object with read-only information about a Savings account. 
+ * 
+ * @author Peter (s3286430)
+ */
+public class SavingsInfo
+{
+	private BigDecimal mBalance;
+	private int mIDCustomer;
+	private int mIDSavings;
+	
+	public SavingsInfo(int aIDSavings, int aIDCustomer, BigDecimal aBalance)
+	{
+		mIDSavings = aIDSavings;
+		mIDCustomer = aIDCustomer;
+		mBalance = aBalance;
+	}
+
+    public BigDecimal getBalance() { return mBalance; }	
+	public int getIDCustomer() { return mIDCustomer; }
+	public int getIDSavings() { return mIDSavings; }
+}

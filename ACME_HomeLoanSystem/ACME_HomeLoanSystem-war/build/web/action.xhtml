@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- author: nanxinglin -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui">
+	<h:head>
+        <title>ACME Account main page</title>
+    </h:head>
+
+	<h:body>
+		<ui:composition template="template.xhtml">
+			<ui:define name="top">
+				<h2 class="text-l text-center">Main Page</h2>
+			</ui:define>
+
+			<ui:define name="content">
+				<center>
+					<h:form rendered="#{userAction.loggedIn}">
+
+						<p:panelGrid columns="4" columnClasses="span-m text-center, span-m text-center, span-m text-center">
+							<p:commandLink value="Create Home Loan" actionListener="#{userSession.toRegisterPage()}" ajax="false"/>
+							<p:commandLink value="Repay Home Loan" actionListener="#{userSession.toRepayPage()}" ajax="false"/>
+							<p:commandLink value="List All Account" actionListener="#{userSession.toListPage()}" ajax="false"/>
+							<p:commandButton actionListener="#{userAction.logout()}" value="Log Out" ajax="false"/>
+						</p:panelGrid>
+
+					</h:form>
+				</center>
+			</ui:define>
+		</ui:composition>
+    </h:body>
+</html>
+

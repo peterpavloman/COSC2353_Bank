@@ -15,18 +15,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Peter (s3286430)
+ * Client application for employers to access the system.
+ * 
+ * @author yunfei
  */
 public class Main
 {
 
 	@EJB
 	private static SavingsClientBeanRemote msSavingBean;
-	
-	// Test bean for demo / testing purposes only
-	@EJB
-	private static DebugResetDBSchemaRemote msTestBean;
 
 	private static Date convertStringToDate(String aString) throws InvalidInputException
 	{
@@ -116,9 +113,13 @@ public class Main
 			System.out.printf("Address: ");
 			address = aReadInput.readLine();
 			if (address.length() == 0) { throw new InvalidInputException(); }
+			System.out.printf("Password: ");
+			String lPassword = aReadInput.readLine();
+			if (lPassword.length() == 0) { throw new InvalidInputException(); }
+			
 			int lCustomerId = msSavingBean.createCustomer(fname,
 					lname, DOB,
-					address);
+					address, lPassword);
 			if (lCustomerId > 0)
 			{
 				System.out.println(
@@ -409,11 +410,10 @@ public class Main
 		}
 	}
 
+	
+	
 	public static void main(String[] args)
 	{
-		// For testing / demo purposes only
-		// msTestBean.resetTables();
-		
 		printMenu();
 	}
 }

@@ -1,40 +1,40 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package data;
 
 import java.math.BigDecimal;
 
 /**
- *
- * @author narks
+ * Data object that represents a transaction (whenever money is withdrawn or
+ * deposited).
+ * 
+ * @author nanxinglin, Peter
  */
-public class Transaction{
-	private int		id, savingID;
+public class Transaction
+{
+	private int		mIDTransaction, mIDSavings;
 	private BigDecimal mAmount;
-	private String	description;
-
-	public Transaction(int savingID, BigDecimal aAmount, String description){
-		this(-1, savingID, aAmount, description);
+	private String	mDescription;
+ 
+	public Transaction(int aIDSavings, BigDecimal aAmount, String aDescription)
+	{
+		this(-1, aIDSavings, aAmount, aDescription);
 	}
 
 	public Transaction(int id, int savingID, BigDecimal aAmount, String description){
-		this.id			=id;
-		this.savingID	=savingID;
+		this.mIDTransaction			=id;
+		this.mIDSavings	=savingID;
 		this.mAmount		=aAmount;
-		this.description=description;
+		this.mDescription=description;
 	}
 
-	public int getID(){ return id; }
-	public void setID(int id){ this.id= id; }
+	public int getID(){ return mIDTransaction; }
+	public void setID(int id){ this.mIDTransaction= id; }
 
-	public int getSavingID(){ return savingID; }
-	public void setSavingID(int savingID){ this.savingID= savingID; }
+	public int getSavingID(){ return mIDSavings; }
+	public void setSavingID(int savingID){ this.mIDSavings= savingID; }
 
 	public BigDecimal getAmount(){ return mAmount; }
 	public void setAmount(BigDecimal aAmount){ mAmount = aAmount; }
 
-	public String getDescription(){ return description; }
-	public void setDescription(String description){ this.description=description; }
+	public String getDescription(){ return mDescription; }
+	public void setDescription(String description){ this.mDescription=description; }
 }

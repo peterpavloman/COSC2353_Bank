@@ -1,0 +1,22 @@
+package beans;
+
+import java.io.Serializable;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
+@Named(value="userSession")
+@SessionScoped
+public class UserSession implements Serializable{
+	private entitydata.Customer	user;
+	public UserSession(){
+		System.out.println("UserSession initialized.");
+	}
+	
+	public void toRegisterPage(){ Constant.redirect("createAccount.xhtml"); }
+	public void toRepayPage(){ Constant.redirect("repayAccount.xhtml"); }
+	public void toAccountsPage(){ Constant.redirect("listAccount.xhtml"); }
+	public void toListPage(){ Constant.redirect("action.xhtml"); }
+
+	public void	setUser(entitydata.Customer c){ user= c; }
+	public entitydata.Customer getUser(){ return user; }
+}

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:p="http://primefaces.org/ui">
+
+	<p:tab title="Basic">
+		<p:panel header="Basic Information">
+			<h:panelGrid columns="2" columnClasses="text-bold pad-right span-m,">
+
+				<h:outputLabel for="firstName" value="First Name"/>
+				<p:inputText id="firstName" label="First Name" value="#{userSession.user.firstName}" readonly="true"/>
+
+				<h:outputLabel for="lastName" value="Last Name"/>
+				<p:inputText id="lastName" label="Last Name" value="#{userSession.user.lastName}" readonly="true"/>
+
+				<h:outputLabel for="dob" value="Date of Birth"/>
+				<p:inputText id="dob" label="Date of Birth" readonly="true"/>
+		</h:panelGrid>
+		</p:panel>
+	</p:tab>
+</html>
+

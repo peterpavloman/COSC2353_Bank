@@ -1,0 +1,23 @@
+
+import exceptions.ApplicationLogicException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jms.JMSException;
+import javax.naming.NamingException;
+import jms.SavingsProducerBridge;
+import jms.SavingsProducerJMS;
+import jms.data.Customer;
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author narks
+ */
+public class test
+{
+	
+}
